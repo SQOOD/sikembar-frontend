@@ -3,7 +3,7 @@
   #login.card.col-lg-6.col-xl-3.h-100.ml-auto
     .card-body
       router-link(to='/')
-        img.mt-5.mb-3.mx-auto.d-block.shadow-img(src='@/assets/img/sikembarlogo.svg')
+        img.mt-3.mb-2.mx-auto.d-block.shadow-img(src='@/assets/img/sikembarlogo.svg')
       .alert.alert-warning.alert-dismissible.fade.show(role='alert')
         p Data di dalam sistem ini adalah penting, kerahasiaan harap dijaga.
         button.close(type="button" data-dismiss="alert" aria-label="Close")
@@ -18,15 +18,15 @@
                 aria-describedby='penjelasanAkun' placeholder='Masukan nama akun'
                 v-model.trim.lazy="$v.username.$model"
                 :class="{ 'is-invalid': $v.username.$error }" )
-              small.error(v-if="!$v.username.alpha") Gunakan format akun pengguna yang benar.
-              small.error(v-if="!$v.username.minLength")
+              p.error(v-if="!$v.username.alpha") Gunakan format akun pengguna yang benar.
+              p.error(v-if="!$v.username.minLength")
                 | Minimum {{$v.username.$params.minLength.min}} karakter.
             .form-group
               label.col-form-label-sm.font-weight-bold(for='sandiPengguna') Kata Sandi
               input#sandiPengguna.form-control.form-control-sm(type='password'
                 v-model.trim.lazy="$v.password.$model"
                 placeholder='Kata Sandi' :class="{ 'is-invalid': $v.password.$error }")
-              small.error(v-if="!$v.password.minLength")
+              p.error(v-if="!$v.password.minLength")
                 | Minimum {{$v.password.$params.minLength.min}} karakter,
                 | dan kombinasi antara angka, huruf, dan simbol.
             button.btn-block.btn.btn-primary.btn-sm(type='submit'
@@ -147,6 +147,8 @@ a.nav-link{
 .error{
   color:#dc3545;
   font-size:0.7rem;
+  line-height:1.1;
+  margin-top:0.3rem;
 }
 
 .success {

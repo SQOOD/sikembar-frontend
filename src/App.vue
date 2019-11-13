@@ -1,6 +1,6 @@
 <template lang='pug'>
   #app.vh-100
-    navigation
+    navigation.shadow-img
     router-view
 </template>
 
