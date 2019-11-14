@@ -6,22 +6,55 @@
             img.img-thumbnail(src='@/assets/img/default-profile.png')
           .col-8
             ul.list-group.list-group-flush
-              li.list-group-item.name PT. Justin Pertambahan
-              li.list-group-item.wiup 8049320843290843208
+              li.list-group-item.name {{companyType}}. {{companyName}}
+              li.list-group-item.wiup
+                strong WIUP :
+                |  {{wiup}}
+              li.list-group-item.detail.email {{email}}
+              li.list-group-item.detail.npwp {{npwp}}
+              li.list-group-item.detail.address {{address}}
               li.list-group-item.detail
-                router-link(to='#').badge.badge-info Nikel
-                router-link(to='#').badge.badge-primary IOP-OPK
-              li.list-group-item.detail.address Jl. Bla bla bla blabla
+                router-link(to='#').badge.badge-info {{commodity}}
+                router-link(to='#').badge.badge-primary {{permission}}
 </template>
+
+<script>
+export default {
+  props: {
+    companyName: {
+      type: String,
+    },
+    companyType: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
+    npwp: {
+      type: String,
+    },
+    wiup: {
+      type: String,
+    },
+    permission: {
+      type: String,
+    },
+    commodity: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
+  },
+};
+</script>
 
 <style scoped>
 .card{
-  background-color:#f7f2e5;
   background-image:url('~@/assets/img/logo-esdm.gif');
   background-position:110% 150%;
   background-size:30%;
   background-repeat:no-repeat;
-  background-blend-mode:overlay;
 }
 
 .list-group-item{
