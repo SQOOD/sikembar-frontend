@@ -5,7 +5,7 @@ div
     vl-view(:zoom.sync='zoom' :center.sync='center' :rotation.sync='rotation')
     vl-layer-tile#osm
       vl-source-osm
-  .container-fluid.pt-3
+  .container.pt-3
     excel-alert
     .row
       .col-sm

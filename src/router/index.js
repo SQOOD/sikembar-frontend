@@ -8,11 +8,21 @@ const routes = [
     path: '/',
     name: 'home',
     component: () => import('../views/Home.vue'),
+    meta: {
+      breadcrumb: [
+        { name: 'Home' },
+      ],
+    },
   },
   {
     path: '/about',
     name: 'about',
     component: () => import('../views/About.vue'),
+    meta: {
+      breadcrumb: [
+        { name: 'About' },
+      ],
+    },
   },
   {
     path: '/login',
@@ -42,9 +52,15 @@ const routes = [
     },
   },
   {
-    path: '/profile',
+    path: '/profile/:wiup',
     name: 'profile',
     component: () => import('../views/profile/Profile.vue'),
+    props: true,
+    meta: {
+      breadcrumb: [
+        { name: 'Profil' },
+      ],
+    },
   },
 ];
 

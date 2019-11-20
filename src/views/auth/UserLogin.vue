@@ -36,7 +36,7 @@
       router-link.nav-link(to='/') Kembali ke Beranda
     .card-footer.row.align-items-center
       small.font-weight-bold Bimus Mineral 4.0
-      img.ml-auto(src='@/assets/img/bumn.svg')
+      img.ml-auto(src='@/assets/img/logo-esdm.gif')
 </template>
 
 <script>
@@ -98,7 +98,7 @@ export default {
 }
 
 #login .card-footer small{
-  color:#2b2017;
+  color:#1E375C;
 }
 
 label{
@@ -113,15 +113,15 @@ a.nav-link{
   padding:0.5rem 0rem;
   font-size:0.8rem;
   vertical-align: middle;
-  color:#422419;
+  color:#1E375C;
 }
 
-.card-footer img{
-  width: 5rem;
+#login .card-footer img{
+  width: 3.5rem;
 }
 
 .btn-primary{
-  background-color:#422419;
+  background-color:#1E375C;
   border-color: #725e41;
   transition: color .15s ease-in-out,
   background-color .15s ease-in-out,
