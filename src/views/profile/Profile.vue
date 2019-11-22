@@ -21,19 +21,25 @@
           h5.font-weight-bold Jatuhkan Berkas Formulir SIKEMBAR disini
             br
             small atau klik disini untuk mencari berkas dalam alat anda.
+        div {{json}}
+        div {{json2}}
         charts
 </template>
 
 <script>
+import readExcel from 'read-excel-file';
 import vue2Dropzone from 'vue2-dropzone';
 import 'vue2-dropzone/dist/vue2Dropzone.min.css';
 import ProfileDetail from '@/components/widgets/profile/Detail.vue';
 import Charts from '@/components/charts/RandomCharts.vue';
+// import schema from '@/excel/schema/neraca';
 
 export default {
   data() {
     return {
       info: '',
+      json: '',
+      json2: '',
       dropzoneOptions: {
         url: 'https://httpbin.org/post',
         thumbnailWidth: 150,
@@ -56,7 +62,17 @@ export default {
   methods: {
     checkUploadType(file) {
       if (file.type.match('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
-        // Harusnya disini ganti thumbnail sama ada tombol remove file
+        readExcel(file, {
+          sheet: 2,
+          transformData(data) {
+            return data.splice(0, 6);
+          },
+        }).then((data) => {
+          this.json = JSON.stringify(data, null, 2);
+        });
+        readExcel(file, { sheet: 3 }).then((data) => {
+          this.json2 = JSON.stringify(data, null, 2);
+        });
       }
     },
   },
