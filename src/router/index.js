@@ -54,7 +54,7 @@ const routes = [
   {
     path: '/profile/:wiup',
     name: 'profile',
-    component: () => import('../views/profile/Profile.vue'),
+    component: () => import('../views/user/miner/Profile.vue'),
     props: true,
     meta: {
       breadcrumb: [
