@@ -64,7 +64,7 @@ export default {
 <style scoped>
 .card{
   margin-bottom:0.7rem;
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
   color:#606060;
 }
 
@@ -76,7 +76,7 @@ export default {
   text-decoration: none;
   color:#505050;
   background-color:rgba(0,0,0,.125);
-  border-radius:0 0 0.5rem 0.5rem;
+  border-radius:0 0 0.2rem 0.2rem;
 }
 
 #mail{

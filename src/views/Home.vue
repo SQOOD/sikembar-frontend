@@ -6,7 +6,6 @@ div
     vl-layer-tile#osm
       vl-source-osm
   .container.pt-3
-    excel-alert
     .row
       .col-sm
         test-card( header='Asal Negara Impor Terbesar' )
@@ -17,12 +16,10 @@ div
 </template>
 
 <script>
-import ExcelAlert from '@/components/alerts/ExcelFile.vue';
 import TestCard from '@/components/widgets/Card.vue';
 
 export default {
   components: {
-    ExcelAlert,
     TestCard,
   },
   data() {

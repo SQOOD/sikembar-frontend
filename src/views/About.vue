@@ -1,5 +1,7 @@
-<template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+<template lang='pug'>
+  .container.mt-4
+    h1 Syarat dan Ketentuan
+    h2 Penggunaan SIKEMBAR dan sistem pendukung lainnya
+    hr
+    p test
 </template>
