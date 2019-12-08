@@ -4,6 +4,7 @@ import vbclass from 'vue-body-class';
 import Vuelidate from 'vuelidate';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
+import VueSession from 'vue-session';
 import Vue2Crumbs from 'vue-2-crumbs';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -25,6 +26,7 @@ Vue.use(vbclass, router);
 Vue.use(VueLayers);
 Vue.use(Vuelidate);
 Vue.use(VueAxios, axios);
+Vue.use(VueSession);
 Vue.use(Vue2Crumbs);
 
 library.add(faUserSecret);
