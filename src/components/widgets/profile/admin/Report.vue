@@ -6,6 +6,7 @@
         router-link.btn.btn-sm.btn-info(to='#')
           font-awesome-icon(:icon='["fas", "file-alt"]')
           | Periksa Laporan
+  router-link(to='#').btn.btn-sm.btn-primary.w-100 Lihat Semua Laporan
 </template>
 
 <script>

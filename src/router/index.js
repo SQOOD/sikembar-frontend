@@ -53,8 +53,19 @@ const routes = [
   },
   {
     path: '/profile/:wiup',
-    name: 'profile',
+    name: 'miner-profile',
     component: () => import('../views/user/miner/Profile.vue'),
+    props: true,
+    meta: {
+      breadcrumb: [
+        { name: 'Profil' },
+      ],
+    },
+  },
+  {
+    path: '/admin/',
+    name: 'admin-profile',
+    component: () => import('../views/user/staffs/Profile.vue'),
     props: true,
     meta: {
       breadcrumb: [

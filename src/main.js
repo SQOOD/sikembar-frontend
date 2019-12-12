@@ -5,9 +5,10 @@ import Vuelidate from 'vuelidate';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
 import Vue2Crumbs from 'vue-2-crumbs';
+import VueGoodTablePlugin from 'vue-good-table';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faUserSecret } from '@fortawesome/free-solid-svg-icons';
+import { faFileAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 import App from './App.vue';
@@ -20,14 +21,16 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@/assets/css/css.css';
 import 'vuelayers/lib/style.css'; // needs css-loader
+import 'vue-good-table/dist/vue-good-table.css';
 
 Vue.use(vbclass, router);
 Vue.use(VueLayers);
 Vue.use(Vuelidate);
 Vue.use(VueAxios, axios);
 Vue.use(Vue2Crumbs);
+Vue.use(VueGoodTablePlugin);
 
-library.add(faUserSecret);
+library.add(faFileAlt);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 

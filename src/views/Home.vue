@@ -8,11 +8,17 @@ div
   .container.pt-3
     .row
       .col-sm
-        test-card( header='Asal Negara Impor Terbesar' )
+        test-card
+          template(slot='header')
+            .text-center Asal Negara Impor
       .col-sm
-        test-card( header='Barang Impor Terbesar' )
+        test-card
+          template(slot='header')
+            .text-center Rencana Belanja 2020
       .col-sm
-        test-card( header='Barang Impor Terbanyak' )
+        test-card
+          template(slot='header')
+            .text-center Realisasi Belanja 2019
 </template>
 
 <script>
