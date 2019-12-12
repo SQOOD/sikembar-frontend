@@ -1,5 +1,6 @@
 <template lang="pug">
-#report
+#report.container.mt-4
+  h1 Daftar Laporan Belum Disetujui
   vue-good-table(:columns='columns' :rows='rows').mb-3
     template(slot='table-row' slot-scope='props')
       span(v-if='props.column.field == "check"')
@@ -54,3 +55,24 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  h1{
+    color:#808080;
+    font-size:1.3rem;
+    font-weight:600;
+  }
+
+  /deep/ .vgt-table th{
+    font-size:0.8rem;
+    font-weight:600;
+  }
+
+  /deep/ .vgt-table td, a{
+    font-size:0.8rem;
+  }
+
+  /deep/ .vgt-table td svg{
+    margin-right: 0.3rem;
+  }
+</style>

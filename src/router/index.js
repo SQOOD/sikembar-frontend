@@ -9,9 +9,8 @@ const routes = [
     name: 'home',
     component: () => import('../views/Home.vue'),
     meta: {
-      breadcrumb: [
-        { name: 'Home' },
-      ],
+      breadcrumb:
+        { label: 'Home' },
     },
   },
   {
@@ -19,9 +18,8 @@ const routes = [
     name: 'about',
     component: () => import('../views/About.vue'),
     meta: {
-      breadcrumb: [
-        { name: 'About' },
-      ],
+      breadcrumb:
+        { label: 'About' },
     },
   },
   {
@@ -57,20 +55,30 @@ const routes = [
     component: () => import('../views/user/miner/Profile.vue'),
     props: true,
     meta: {
-      breadcrumb: [
-        { name: 'Profil' },
-      ],
+      breadcrumb:
+        { label: 'Profil' },
     },
   },
   {
     path: '/admin/',
     name: 'admin-profile',
-    component: () => import('../views/user/staffs/Profile.vue'),
+    component: () => import('../views/user/staff/Profile.vue'),
     props: true,
     meta: {
-      breadcrumb: [
-        { name: 'Profil' },
-      ],
+      breadcrumb:
+        { label: 'Profil' },
+    },
+  },
+  {
+    path: '/list',
+    name: 'list',
+    component: () => import('../views/user/staff/reports/List.vue'),
+    props: true,
+    meta: {
+      breadcrumb: {
+        label: 'List',
+        parent: 'Profil',
+      },
     },
   },
 ];
