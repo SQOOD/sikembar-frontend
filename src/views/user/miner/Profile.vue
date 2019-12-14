@@ -25,6 +25,43 @@
         br
         button.btn-block.btn.btn-primary.btn-sm(v-if="reports[0]" v-on:click="addReport()") Kirim
         button.btn-block.btn.btn-primary.btn-sm(v-if="report_procurements[0]" v-on:click="addReportBarang()") Kirim
+        div(v-if="reports[0]")
+          br
+          span
+            | Neraca 
+          div(v-for="balance in calculated_balance")
+            | {{balance['Uraian']}}: {{balance['Nilai']}}
+          br
+          span
+            | Laba Rugi 
+          div(v-for="profit_loss in calculated_profit_loss")
+            | {{profit_loss['Uraian']}}: {{profit_loss['Nilai']}}
+          br
+          span
+            | Penerimaan Negara 
+          div(v-for="national_income in calculated_national_income")
+            | {{national_income['Uraian']}}: {{national_income['Nilai']}}
+          br
+          span
+            | Arus Kas 
+          div(v-for="cashflow in calculated_cashflow")
+            | {{cashflow['Uraian']}}: {{cashflow['Nilai']}}
+          br
+          span
+            | Anggaran Belanja
+          div(v-for="budget in calculated_budget")
+            | {{budget['Uraian']}}: {{budget['Nilai']}}
+          br
+          span
+            | HPP 
+          div(v-for="costofgood in calculated_costofgood")
+            | {{costofgood['Uraian']}}: {{costofgood['Nilai']}}
+        div(v-if="report_procurements[0]")
+          br
+          span
+            | Belanja Barang 
+          div(v-for="barang in belanjaBarang" v-if="barang['Jenis Barang'] == 'Total'")
+            | Total TKDN Kategori {{barang['Kategori']}}: {{barang['Bobot Tertimbang (%)'].toFixed(2)}}%
         div
           | {{ json }}
         charts
@@ -391,7 +428,7 @@ export default {
         user_id: this.$session.get('user').user_id,
         year: this.reports[0]["Tahun"],
         term: this.reports[0]["Termin"],
-        report_type: this.$session.get('user').company_type,
+        report_type: this.reports[0]["Tipe Laporan"],
         currency: this.reports[0]["Mata Uang"],
         rate: this.reports[0]["Kurs"],
         approved: 0,

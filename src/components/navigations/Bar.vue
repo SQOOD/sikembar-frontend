@@ -9,10 +9,11 @@
       #navbarSupportedContent.collapse.navbar-collapse
         ul.navbar-nav.ml-auto
           li.nav-item(v-if='session')
-            router-link.nav-link(to='#' v-if='session.role == "miner"') Input Belanja Barang
             router-link.nav-link(to='#' v-if='session.role == "vendor"') Input Data Barang
           li.nav-item(v-if='session')
-            router-link.nav-link(to='#') {{session.fullname}}
+            router-link.nav-link(:to='"../rekap-keuangan/" + session.username' v-if='session.role == "miner"') Rekap Keuangan
+          li.nav-item(v-if='session')
+            router-link.nav-link(:to='"../profile/" + session.username') {{session.fullname}}
           li.nav-item(v-if='session')
             span.nav-link(v-on:click='logout()') Keluar
           li.nav-item(v-else)
@@ -33,11 +34,6 @@ export default {
     this.session = this.$session.get('user');
   },
   methods: {
-    checkUploadType(file) {
-      if (file.type.match('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
-        console.log('ba');
-      }
-    },
     logout() {
       this.axios.get(address + ":3000/logout").then((response) => {
         alert("Successfully Logged Out");

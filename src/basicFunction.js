@@ -5,7 +5,8 @@ let basicFunction = {
 		const monthNames = ["January", "February", "March", "April", "May", "June",
 		  "July", "August", "September", "October", "November", "December"
 		];
-		let month = monthNames[(currentdate.getMonth())];
+		let month = currentdate.getMonth()+1;
+		let monthText = monthNames[(currentdate.getMonth())];
 		let year = currentdate.getFullYear();
 		let second = currentdate.getSeconds();
 	    let minute = currentdate.getMinutes();
@@ -13,6 +14,7 @@ let basicFunction = {
 		let dateObj = {
 			date: date,
 			month: month,
+			monthText: monthText,
 			year: year,
 			second: second,
 			minute: minute,

@@ -116,6 +116,12 @@ let query = {
 	      }
   	}`,
 
+  	updateReport: `mutation updateSingleReport($reportId: Int!, $input:ReportsInput) {
+          updateReport(report_id: $reportId, input: $input) {
+              report_id
+          }
+ 	}`,
+
   	deleteReport: `mutation deleteSingleReport($reportId: Int!) {
 	      deleteReport(report_id: $reportId) {
 	          report_id

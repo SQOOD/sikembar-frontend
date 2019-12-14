@@ -81,6 +81,26 @@ const routes = [
       },
     },
   },
+  {
+    path: '/rekap-keuangan/:wiup',
+    name: 'miner-rekap-keuangan',
+    component: () => import('../views/user/miner/RekapKeuangan.vue'),
+    props: true,
+    meta: {
+      breadcrumb:
+        { label: 'Rekap Keuangan' },
+    },
+  },
+  {
+    path: '/report-keuangan/:report_id',
+    name: 'miner-report-keuangan',
+    component: () => import('../views/user/staff/reports/ReportKeuangan.vue'),
+    props: true,
+    meta: {
+      breadcrumb:
+        { label: 'Report Keuangan' },
+    },
+  },
 ];
 
 const router = new VueRouter({

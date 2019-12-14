@@ -7,6 +7,7 @@ import VueAxios from 'vue-axios';
 import VueSession from 'vue-session';
 import Vue2Crumbs from 'vue-2-crumbs';
 import VueGoodTablePlugin from 'vue-good-table';
+import ShardsVue from 'shards-vue';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faFileAlt } from '@fortawesome/free-solid-svg-icons';
@@ -31,6 +32,7 @@ Vue.use(VueAxios, axios);
 Vue.use(VueSession);
 Vue.use(Vue2Crumbs);
 Vue.use(VueGoodTablePlugin);
+Vue.use(ShardsVue);
 
 library.add(faFileAlt);
 
