@@ -179,6 +179,7 @@ export default {
                   if(this.chartData.datasets[k].label == 'Aktiva Tetap') {
                     if(this.chartBalances[j]['detail'] == 'Aktiva Tetap') {
                       this.chartData.datasets[k].data.push(this.chartBalances[j]['value']);
+                      console.log("this.chartBalances[j]['value']")
                     }
                   }
                   if(this.chartData.datasets[k].label == 'Jumlah Aktiva') {

@@ -39,6 +39,43 @@ let query = {
 	      }
   	}`,
 
+  	allUserDetail: `query getAllUserDetail {
+  		user_details {
+  			user_detail_id
+	        user_id
+			company_id
+			company_name
+			type
+			company_address
+			npwp
+			email
+			wiup
+			license_type
+			license_status
+			province_code
+			province
+			commodity
+  		}
+  	}`,
+
+  	addUserDetail: `mutation createSingleUserDetail($input:UserDetailsInput) {
+          createUserDetail(input: $input) {
+              user_detail_id
+          }
+  	}`,
+
+  	updateUserDetail: `mutation updateSingleUserDetail($userDetailId: Int!, $input:UserDetailsInput) {
+          updateUserDetail(user_detail_id: $userDetailId, input: $input) {
+              user_detail_id
+          }
+  	}`,
+
+  	deleteUserDetail: `mutation deleteSingleUserDetail($userDetailId: Int!) {
+	      deleteUserDetail(user_detail_id: $userDetailId) {
+	          user_detail_id
+	      }
+  	}`,
+
     allCommerce: `query getAllItem {
 	    commerces {
 	      commerce_id

@@ -16,7 +16,7 @@ import Report from '@/components/widgets/profile/admin/Report.vue';
 export default {
   data() {
     return {
-      userName: 'rendra',
+      userName: '',
     };
   },
   components: {
@@ -25,6 +25,7 @@ export default {
     Report,
   },
   mounted() {
+    this.userName = this.$session.get('user').fullname;
   },
   methods: {
   },

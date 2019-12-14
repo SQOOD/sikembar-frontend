@@ -42,6 +42,7 @@
 
 <script>
 import { required, minLength, alpha } from 'vuelidate/lib/validators';
+import address from '@/address';
 
 export default {
   data() {
@@ -70,10 +71,28 @@ export default {
         this.submitStatus = 'ERROR';
       } else {
         // do your submit logic here
-        this.submitStatus = 'PENDING';
-        setTimeout(() => {
-          this.submitStatus = 'OK';
-        }, 500);
+        this.axios.post(address + ':3000/login-user', {
+          username: this.username,
+          password: this.password,
+        })
+        .then((response) => {
+          console.log(response);
+          this.submitStatus = 'PENDING';
+          setTimeout(() => {
+            if(response.data.token) {
+              this.submitStatus = 'OK';
+              this.$session.start();
+              this.$session.set('user', response.data.response);
+              document.cookie = "token=" + response.data.token;
+              document.cookie = "user_session=" + this.$session.get('user').user_id;
+              localStorage.setItem('user_role', this.$session.get('user').role);
+              this.$router.push('/admin');
+            }
+            else {
+              this.submitStatus = 'ERROR';
+            }
+          }, 500);
+        });
       }
     },
   },
