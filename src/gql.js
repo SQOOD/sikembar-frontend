@@ -417,6 +417,7 @@ let query = {
 		    report_procurement_id
 		    detail
 		    specification
+		    qty
 		    unit_price
 		    category
 		    country_of_origin

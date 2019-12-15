@@ -994,7 +994,7 @@ export default {
         user_id: this.$session.get('user').user_id,
         year: this.report_procurements[0]["Tahun"],
         term: this.report_procurements[0]["Termin"],
-        report_type: this.$session.get('user').company_type,
+        report_type: this.reports[0]["Tipe Laporan"],
         approved: 0,
         flagged_for_deletion: 0
       };

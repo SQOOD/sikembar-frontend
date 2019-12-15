@@ -93,12 +93,22 @@ const routes = [
   },
   {
     path: '/report-keuangan/:report_id',
-    name: 'miner-report-keuangan',
+    name: 'staff-report-keuangan',
     component: () => import('../views/user/staff/reports/ReportKeuangan.vue'),
     props: true,
     meta: {
       breadcrumb:
         { label: 'Report Keuangan' },
+    },
+  },
+  {
+    path: '/verifikasi-barang/:wiup',
+    name: 'staff-verifikasi-barang',
+    component: () => import('../views/user/staff/Verification.vue'),
+    props: true,
+    meta: {
+      breadcrumb:
+        { label: 'Verifikasi Barang' },
     },
   },
 ];
