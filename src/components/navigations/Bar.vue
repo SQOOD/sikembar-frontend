@@ -8,8 +8,7 @@
         span.navbar-toggler-icon.p-2
       #navbarSupportedContent.collapse.navbar-collapse
         ul.navbar-nav.ml-auto
-          li.nav-item
-            router-link.nav-link(to='/login') Masuk
+          router-view(name='menu')
 </template>
 
 <style scoped>
@@ -17,6 +16,10 @@
     border-bottom:#F0B411 solid 1px;
     background-color: #1E375C;
     background-image: linear-gradient(315deg, #005596 0%, #1E375C 74%);
+  }
+
+  .nav-item{
+    font-size:0.8rem;
   }
 
   .navbar-toggler{

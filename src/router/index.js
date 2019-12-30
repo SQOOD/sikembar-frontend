@@ -7,7 +7,10 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: () => import('../views/Home.vue'),
+    components: {
+      default: () => import('@/views/Home.vue'),
+      menu: () => import('@/components/navigations/state/Login.vue'),
+    },
     meta: {
       breadcrumb:
         { label: 'Home' },
