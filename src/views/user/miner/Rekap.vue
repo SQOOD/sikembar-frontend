@@ -2,17 +2,7 @@
   .container
     .row.mt-3
       .col-md-5
-        profile-detail(
-          :companyName= 'info.nama_perusahaan',
-          :permission= 'info.perizinan[0].jenis_izin',
-          :companyType= 'info.tipe_perusahaan',
-          :address= 'info.alamat_perusahaan',
-          :email= 'info.email',
-          :npwp= 'info.npwp',
-          :userName= 'info.perizinan[0].kode_wiup',
-          :commodity= 'info.perizinan[0].komoditas',
-          :province= 'info.perizinan[0].provinsi'
-        )
+        p abc
       .col-md-7
         ExcelAlert
         vue-dropzone( ref="myVueDropzone" id="dropzone"
@@ -58,7 +48,7 @@ export default {
     ExcelAlert,
   },
   mounted() {
-    this.axios.get(`/v1/moms?kode_wiup=${this.$route.params.userName}`).then((response) => {
+    this.axios.get(`/v1/moms?kode_wiup=${this.$route.params.wiup}`).then((response) => {
       this.info = response.data.perusahaan;
     });
   },

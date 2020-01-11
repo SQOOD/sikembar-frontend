@@ -6,6 +6,7 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import Vue2Crumbs from 'vue-2-crumbs';
 import VueGoodTablePlugin from 'vue-good-table';
+import Fragment from 'vue-fragment';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faFileAlt } from '@fortawesome/free-solid-svg-icons';
@@ -29,6 +30,7 @@ Vue.use(Vuelidate);
 Vue.use(VueAxios, axios);
 Vue.use(Vue2Crumbs);
 Vue.use(VueGoodTablePlugin);
+Vue.use(Fragment.Plugin);
 
 library.add(faFileAlt);
 

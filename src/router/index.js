@@ -19,7 +19,7 @@ const routes = [
   {
     path: '/about',
     name: 'about',
-    component: () => import('../views/About.vue'),
+    component: () => import('@/views/About.vue'),
     meta: {
       breadcrumb:
         { label: 'About' },
@@ -28,7 +28,7 @@ const routes = [
   {
     path: '/login',
     name: 'user-login',
-    component: () => import('../views/auth/UserLogin.vue'),
+    component: () => import('@/views/auth/UserLogin.vue'),
     meta: {
       hideNav: true, /* Hide Navigation */
       bodyClass: 'background-login',
@@ -37,7 +37,7 @@ const routes = [
   {
     path: '/admin-login',
     name: 'admin-login',
-    component: () => import('../views/auth/AdminLogin.vue'),
+    component: () => import('@/views/auth/AdminLogin.vue'),
     meta: {
       hideNav: true, /* Hide Navigation */
       bodyClass: 'background-admin',
@@ -46,26 +46,55 @@ const routes = [
   {
     path: '*',
     name: '404',
-    component: () => import('../views/404.vue'),
+    component: () => import('@/views/404.vue'),
     meta: {
       hideNav: true, /* Hide Navigation */
       bodyClass: 'background-404',
     },
   },
   {
-    path: '/profile/:wiup',
-    name: 'miner-profile',
-    component: () => import('../views/user/miner/Profile.vue'),
-    props: true,
-    meta: {
-      breadcrumb:
-        { label: 'Profil' },
+    path: '/miner/:userName',
+    name: 'miner',
+    redirect: '/miner/:userName/profile',
+    components: {
+      menu: () => import('@/components/navigations/state/Miner.vue'),
+      default: () => import('@/views/pages/Profile.vue'),
     },
+    children: [
+      {
+        path: 'profile',
+        name: 'miner-profile',
+        components: {
+          default: () => import('@/views/user/miner/Profile.vue'),
+        },
+        props: true,
+        meta: {
+          breadcrumb:
+            { label: 'Profil' },
+        },
+      },
+      {
+        path: 'rekap',
+        name: 'miner-rekap',
+        components: {
+          default: () => import('@/views/user/miner/Rekap.vue'),
+        },
+        props: true,
+        meta: {
+          breadcrumb:
+            { label: 'Rekap' },
+        },
+      },
+    ],
   },
   {
-    path: '/admin/',
+    path: '/admin/profile',
     name: 'admin-profile',
-    component: () => import('../views/user/staff/Profile.vue'),
+    alias: '/admin',
+    components: {
+      default: () => import('@/views/user/staff/Profile.vue'),
+      menu: () => import('@/components/navigations/state/Staff.vue'),
+    },
     props: true,
     meta: {
       breadcrumb:
@@ -75,7 +104,7 @@ const routes = [
   {
     path: '/list',
     name: 'list',
-    component: () => import('../views/user/staff/reports/List.vue'),
+    component: () => import('@/views/user/staff/reports/List.vue'),
     props: true,
     meta: {
       breadcrumb: {

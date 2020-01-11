@@ -18,7 +18,7 @@
     background-image: linear-gradient(315deg, #005596 0%, #1E375C 74%);
   }
 
-  .nav-item{
+  /deep/ .nav-item{
     font-size:0.8rem;
   }
 

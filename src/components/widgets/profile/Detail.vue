@@ -16,12 +16,12 @@ div
     .card-body.pt-2.pb-2
       h6.mb-0 E-Mail
         span {{email}}
-  .detail.card.shadowbox(v-show='wiup!=""')
+  .detail.card.shadowbox(v-show='userName!=""')
     .card-body.pt-2.pb-2
       ul.pl-0.mb-0
         li
           h6 WIUP
-          span {{wiup}}
+          span {{userName}}
         li
           h6 NPWP
           span {{npwp}}
@@ -43,10 +43,6 @@ export default {
       default: '',
     },
     npwp: {
-      type: String,
-      default: '',
-    },
-    wiup: {
       type: String,
       default: '',
     },
