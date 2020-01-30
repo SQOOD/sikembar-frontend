@@ -14,6 +14,7 @@ const routes = [
     meta: {
       breadcrumb:
         { label: 'Home' },
+      auth: false,
     },
   },
   {
@@ -32,6 +33,7 @@ const routes = [
     meta: {
       hideNav: true, /* Hide Navigation */
       bodyClass: 'background-login',
+      auth: false,
     },
   },
   {
@@ -41,6 +43,7 @@ const routes = [
     meta: {
       hideNav: true, /* Hide Navigation */
       bodyClass: 'background-admin',
+      auth: false,
     },
   },
   {
@@ -50,6 +53,7 @@ const routes = [
     meta: {
       hideNav: true, /* Hide Navigation */
       bodyClass: 'background-404',
+      auth: false,
     },
   },
   {
@@ -88,11 +92,12 @@ const routes = [
     ],
   },
   {
-    path: '/admin/profile',
-    name: 'admin-profile',
+    path: '/admin/:userName/',
+    name: 'admin',
     alias: '/admin',
+    redirect: '/admin/:userName/profile',
     components: {
-      default: () => import('@/views/user/staff/Profile.vue'),
+      default: () => import('@/views/pages/Profile.vue'),
       menu: () => import('@/components/navigations/state/Staff.vue'),
     },
     props: true,
@@ -100,11 +105,85 @@ const routes = [
       breadcrumb:
         { label: 'Profil' },
     },
+    children: [
+      {
+        path: 'profile',
+        name: 'admin-profile',
+        components: {
+          default: () => import('@/views/user/staff/Profile.vue'),
+        },
+        props: true,
+        meta: {
+          breadcrumb:
+            { label: 'Profil' },
+        },
+      },
+      {
+        path: 'create-user',
+        name: 'create-user',
+        components: {
+          default: () => import('@/views/user/staff/CreateUser.vue'),
+        },
+        props: true,
+        meta: {
+          breadcrumb:
+            { label: 'Buat Pengguna' },
+        },
+      },
+      {
+        path: 'list-users',
+        name: 'list-users',
+        components: {
+          default: () => import('@/views/user/staff/lists/User.vue'),
+        },
+        props: true,
+        meta: {
+          breadcrumb:
+            { label: 'Daftar Pengguna' },
+        },
+      },
+      {
+        path: 'view-user/miner/:userName',
+        name: 'view-miner',
+        components: {
+          default: () => import('@/views/user/miner/Profile.vue'),
+        },
+        props: true,
+        meta: {
+          breadcrumb:
+            { label: 'Daftar Pengguna' },
+        },
+      },
+      {
+        path: 'view-user/vendor/:userName',
+        name: 'view-vendor',
+        components: {
+          default: () => import('@/views/user/vendor/Profile.vue'),
+        },
+        props: true,
+        meta: {
+          breadcrumb:
+            { label: 'Daftar Pengguna' },
+        },
+      },
+      {
+        path: 'view-user/staff/:userName',
+        name: 'view-staff',
+        components: {
+          default: () => import('@/views/user/staff/Profile.vue'),
+        },
+        props: true,
+        meta: {
+          breadcrumb:
+            { label: 'Daftar Pengguna' },
+        },
+      },
+    ],
   },
   {
     path: '/list',
     name: 'list',
-    component: () => import('@/views/user/staff/reports/List.vue'),
+    component: () => import('@/views/user/miner/Profile.vue'),
     props: true,
     meta: {
       breadcrumb: {
@@ -119,6 +198,14 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.auth === false || window.$cookies.isKey('apollo') != null) {
+    next();
+  } else {
+    router.push('/login');
+  }
 });
 
 export default router;

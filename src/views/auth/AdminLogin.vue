@@ -3,7 +3,7 @@
   #login.card.col-lg-6.col-xl-3.h-100.ml-auto
     .card-body
       router-link(to='/')
-        img.mt-3.mb-2.mx-auto.d-block.shadow-img(src='@/assets/img/sikembarlogo.svg')
+        img.mt-3.mb-2.mx-auto.d-block.shadow-img(src='@/assets/img/logo-esdm.gif')
       .alert.alert-warning.alert-dismissible.fade.show(role='alert')
         p Data di dalam sistem ini adalah penting, kerahasiaan harap dijaga.
         button.close(type="button" data-dismiss="alert" aria-label="Close")
@@ -18,7 +18,7 @@
                 aria-describedby='penjelasanAkun' placeholder='Masukan nama akun'
                 v-model.trim.lazy="$v.username.$model"
                 :class="{ 'is-invalid': $v.username.$error }" )
-              p.error(v-if="!$v.username.alpha") Gunakan format akun pengguna yang benar.
+              p.error(v-if="!$v.username.numeric") Gunakan format akun pengguna yang benar.
               p.error(v-if="!$v.username.minLength")
                 | Minimum {{$v.username.$params.minLength.min}} karakter.
             .form-group
@@ -28,20 +28,22 @@
                 placeholder='Kata Sandi' :class="{ 'is-invalid': $v.password.$error }")
               p.error(v-if="!$v.password.minLength")
                 | Minimum {{$v.password.$params.minLength.min}} karakter,
-                | dan kombinasi antara angka, huruf, dan simbol.
+                | dan kombinasi antara angka dan huruf.
             button.btn-block.btn.btn-primary.btn-sm(type='submit'
               :disabled="submitStatus === 'PENDING'") Kirim
             p.typo.success.pt-2(v-if="submitStatus === 'OK'") Sukses masuk.
             p.typo.error.pt-2(v-if="submitStatus === 'ERROR'") Mohon isi formulir dengan tepat.
+            p.typo.error.pt-2(v-if="submitStatus === 'FAIL'") Akun Pengguna atau Kata Sandi salah.
             p.typo.wait.pt-2(v-if="submitStatus === 'PENDING'") Mengirimkan data.
       router-link.nav-link(to='/') Kembali ke Beranda
     .card-footer.row.align-items-center
       small.font-weight-bold Bimus Mineral 4.0
-      img.ml-auto(src='@/assets/img/logo-esdm.gif')
 </template>
 
 <script>
-import { required, minLength, alpha } from 'vuelidate/lib/validators';
+import { required, minLength, numeric } from 'vuelidate/lib/validators';
+import gql from 'graphql-tag';
+import { onLogin } from '../../vue-apollo';
 
 export default {
   data() {
@@ -55,7 +57,7 @@ export default {
     username: {
       required,
       minLength: minLength(4),
-      alpha,
+      numeric,
     },
     password: {
       required,
@@ -63,17 +65,43 @@ export default {
     },
   },
   methods: {
-    submit() {
+    async submit() {
       console.log('submit!');
       this.$v.$touch();
       if (this.$v.$invalid) {
         this.submitStatus = 'ERROR';
       } else {
-        // do your submit logic here
         this.submitStatus = 'PENDING';
-        setTimeout(() => {
+        console.log('submitting');
+        // await this.$recaptchaLoaded();
+        // do your submit logic here
+        this.$apollo.mutate({
+          mutation: gql`mutation($username: String!, $password: String!){
+            login(username:$username, password:$password){
+              user{
+                username
+                role
+              }
+              accessToken
+            }
+          }`,
+          variables: {
+            username: this.username,
+            password: this.password,
+          },
+        }).then((data) => {
+        // Result
+          onLogin(this.$apollo.provider.defaultClient,
+            data.data.login.accessToken,
+            data.data.login.user.role,
+            data.data.login.user.username);
           this.submitStatus = 'OK';
-        }, 500);
+          this.$router.push(`/admin/${data.data.login.user.username}/profile`);
+        }).catch((error) => {
+          // Error
+          console.error(error);
+          this.submitStatus = 'FAIL';
+        });
       }
     },
   },

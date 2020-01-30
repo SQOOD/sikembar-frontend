@@ -1,7 +1,7 @@
 <template lang='pug'>
 div
   vl-map.shadow-nohover(:load-tiles-while-animating='true'
-  :load-tiles-while-interacting='true' style='height: 450px; border-bottom:#1A353D solid 2px')
+  :load-tiles-while-interacting='true' style='height: 330px; border-bottom:#1A353D solid 2px')
     vl-view(:zoom.sync='zoom' :center.sync='center' :rotation.sync='rotation')
     vl-layer-tile#osm
       vl-source-osm
@@ -30,8 +30,8 @@ export default {
   },
   data() {
     return {
-      zoom: 4,
-      center: [172.7610085227272, -31.988312375537454],
+      zoom: 3,
+      center: [484.72736965890346, 1.4880939094014138],
       rotation: 0,
     };
   },

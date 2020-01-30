@@ -1,7 +1,8 @@
 <template lang='pug'>
   #app.vh-100
-    navigation
+    heading
     router-view
+    footing
 </template>
 
 <style>
@@ -10,11 +11,13 @@
 
 <script>
 // @ is an alias to /src
-import Navigation from '@/components/navigations/Bar.vue';
+import Heading from '@/components/navigations/Header.vue';
+import Footing from '@/components/navigations/Footer.vue';
 
 export default {
   components: {
-    Navigation,
+    Heading,
+    Footing,
   },
 };
 </script>

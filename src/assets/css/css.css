@@ -29,3 +29,25 @@ body{
   display:none;
 }
 
+/*Table*/
+.vgt-global-search{
+  background:rgb(83, 83, 83) !important;
+}
+
+.vgt-global-search__input .input__icon .magnifying-glass{
+  margin-top: 5px !important;
+}
+  
+.vgt-table th{
+  font-size:0.9rem;
+  min-width:10rem !important;
+  text-align: center; 
+}
+
+.vgt-table th:first-child{
+  min-width:auto !important
+}
+
+.vgt-table td{
+  font-size:0.8rem;
+}

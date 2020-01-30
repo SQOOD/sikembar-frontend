@@ -1,76 +1,451 @@
-<template lang='pug'>
-  .container
-    .row.mt-3
-      .col-md-5
-        p abc
-      .col-md-7
-        ExcelAlert
-        vue-dropzone( ref="myVueDropzone" id="dropzone"
-        :options="dropzoneOptions" :useCustomSlot='true' @vdropzone-file-added='checkUploadType'
-        :duplicateCheck='true' )
-          img(src='@/assets/img/excel.svg')
-          h5.font-weight-bold Jatuhkan Berkas Formulir SIKEMBAR disini
-            br
-            small atau klik disini untuk mencari berkas dalam alat anda.
-        div
-          | {{ json }}
-        charts
+<template lang="pug">
+  .container.mt-4
+    h1.pb-2 Rekap Perusahaan
+    span(v-html ='reportFinances')
 </template>
 
 <script>
-// import XLSX from 'xlsx';
-import vue2Dropzone from 'vue2-dropzone';
-import ProfileDetail from '@/components/widgets/profile/Detail.vue';
-import Charts from '@/components/charts/RandomCharts.vue';
-import ExcelAlert from '@/components/alerts/ExcelFile.vue';
+/* eslint-disable */
+import gql from 'graphql-tag';
+import { jsonToHTML } from 'nested-json-to-table';
+import $ from 'jquery';
+import _ from 'lodash';
+import { bootstrapTable } from 'bootstrap-table';
 
-import 'vue2-dropzone/dist/vue2Dropzone.min.css';
-
+class Builder {
+  constructor () {
+    this.indent = 0
+  }
+ 
+  table (next) {
+    this._wrap('table', next)
+  }
+}
 
 export default {
+  apollo:{
+    reportFinances: {
+      query: gql` query reportFinances($username: String!){
+        reportFinances(where: {user: {username: {equals: $username}}}){
+          year
+          rate
+          report_type
+          assumption{
+            rate
+            detail
+            volume_value
+            volume_unit
+            price
+            cut_off
+            cut_off_unit
+            currency
+          }
+          balance{
+            value
+            detail
+            category
+            sub_category
+          }
+          budgets{
+            value
+            detail
+          }
+          capital_budget{
+            value
+            detail
+          }
+          cashflow{
+            value
+            category
+            detail
+          }
+          cost_of_good{
+            value
+            detail
+          }
+          fuel{
+            rate
+            price
+            currency
+          }
+          investment{
+            value
+            detail
+          }
+          lost_profit{
+            value
+            detail
+            category
+          }
+          other_finance{
+            detail
+            value
+          }
+          operation_cost{
+            value
+            detail
+          }
+          royalty{
+            value
+            detail
+          }
+          state_revenue{
+            value
+            detail
+            category
+          }
+          source_of_funding{
+            value
+            detail
+          }
+        }
+      }`,
+      variables: {
+        username: 'perusahaan1',
+      },
+      update(data) {
+        data = jsonToHTML(data.reportFinances);
+        
+        return data;
+      },
+    },
+  },  
+  name: 'rekap',
+  components: {
+  },
   data() {
     return {
-      info: '',
-      json: '',
-      dropzoneOptions: {
-        url: 'https://httpbin.org/post',
-        thumbnailWidth: 150,
-        maxFilesize: 1,
-        headers: { 'My-Awesome-Header': 'header value' },
-        acceptedFiles: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel.sheet.macroEnabled.12',
+      requestDone : false,
+      meta: {
+        "order": [
+          "year",
+          "rate",
+          "report_type",
+          "assumption",
+          "balance",
+          "budgets",
+          "capital_budget",
+          "cashflow",
+          "cost_of_good",
+          "fuel",
+          "investment",
+          "lost_profit",
+          "other_finance",
+          "operation_cost",
+          "royalty",
+          "state_revenue",
+          "source_of_funding",
+        ],
+        "mapping": {
+          "year": {
+            "title": "year"
+          },
+          "rate": {
+            "title": "rate"
+          },
+          "assumption": {
+            "title": "assumption",
+            "meta": {
+              "order": [
+                "rate",
+                "detail",
+                "volume_value",
+                "volume_unit",
+                "price",
+                "cut_off",
+                "cut_off_unit",
+                "currency",
+              ],
+              "mapping": {
+                "rate": {
+                  "title": "rate"
+                },
+                "detail": {
+                  "title": "detail"
+                },
+                "volume_value": {
+                  "title": "volume_value"
+                },
+                "volume_unit": {
+                  "title": "volume_unit"
+                },
+                "price": {
+                  "title": "price"
+                },
+                "cut_off": {
+                  "title": "cut_off"
+                },
+                "cut_off_unit": {
+                  "title": "cut_off_unit"
+                },
+                "currency": {
+                  "title": "currency"
+                },
+              },
+            },
+          },
+          "balance": {
+            "title": "balance",
+            "meta": {
+              "order": [
+                "value",
+                "detail",
+                "category",
+                "sub_category",
+              ],
+              "mapping": {
+                "value": {
+                  "title": "value"
+                },
+                "detail": {
+                  "title": "detail"
+                },
+                "category": {
+                  "title": "category"
+                },
+                "sub_category": {
+                  "title": "sub_category"
+                },
+              },
+            },
+          },
+          "budgets": {
+            "title": "budgets",
+            "meta": {
+              "order": [
+                "value",
+                "detail",
+              ],
+              "mapping": {
+                "value": {
+                  "title": "value"
+                },
+                "detail": {
+                  "title": "detail"
+                },
+              },
+            },
+          },
+          "capital_budget": {
+            "title": "capital_budget",
+            "meta": {
+              "order": [
+                "value",
+                "detail",
+              ],
+              "mapping": {
+                "value": {
+                  "title": "value"
+                },
+                "detail": {
+                  "title": "detail"
+                },
+              },
+            },
+          },
+          "cashflow": {
+            "title": "cashflow",
+            "meta": {
+              "order": [
+                "value",
+                "category",
+                "detail",
+              ],
+              "mapping": {
+                "value": {
+                  "title": "value"
+                },
+                "category": {
+                  "title": "category"
+                },
+                "detail": {
+                  "title": "detail"
+                },
+              },
+            }
+          },
+          "cost_of_good": {
+            "title": "cost_of_good",
+            "meta": {
+              "order": [
+                "value",
+                "detail",
+              ],
+              "mapping": {
+                "value": {
+                  "title": "value"
+                },
+                "detail": {
+                  "title": "detail"
+                },
+              },
+            },
+          },
+          "fuel": {
+            "title": "fuel",
+            "meta": {
+              "order": [
+                "rate",
+                "price",
+                "currency",
+              ],
+              "mapping": {
+                "rate": {
+                  "title": "rate"
+                },
+                "price": {
+                  "title": "price"
+                },
+                "currency": {
+                  "title": "currency"
+                },
+              },
+            },
+          },
+          "investment": {
+            "title": "investment",
+            "meta": {
+              "order": [
+                "value",
+                "detail",
+              ],
+              "mapping": {
+                "value": {
+                  "title": "value"
+                },
+                "detail": {
+                  "title": "detail"
+                },
+              },
+            },
+          },
+          "lost_profit": {
+            "title": "lost_profit",
+            "meta": {
+              "order": [
+                "value",
+                "detail",
+                "category",
+              ],
+              "mapping": {
+                "value": {
+                  "title": "value"
+                },
+                "detail": {
+                  "title": "detail"
+                },
+                "category": {
+                  "title": "category"
+                },
+              },
+            },
+          },
+          "other_finance": {
+            "title": "other_finance",
+            "meta": {
+              "order": [
+                "detail",
+                "value",
+              ],
+              "mapping": {
+                "detail": {
+                  "title": "detail"
+                },
+                "value": {
+                  "title": "value"
+                },
+              },
+            },
+          },
+          "operation_cost": {
+            "title": "operation_cost",
+            "meta": {
+              "order": [
+                "value",
+                "detail",
+              ],
+              "mapping": {
+                "value": {
+                  "title": "value"
+                },
+                "detail": {
+                  "title": "detail"
+                },
+              },
+            },
+          },
+          "royalty": {
+            "title": "royalty",
+            "meta": {
+              "order": [
+                "value",
+                "detail",
+              ],
+              "mapping": {
+                "value": {
+                  "title": "value"
+                },
+                "detail": {
+                  "title": "detail"
+                },
+              },
+            },
+          },
+          "state_revenue": {
+            "title": "state_revenue",
+            "meta": {
+              "order": [
+                "value",
+                "detail",
+                "category",
+              ],
+              "mapping": {
+                "value": {
+                  "title": "value"
+                },
+                "detail": {
+                  "title": "detail"
+                },
+                "category": {
+                  "title": "category"
+                },
+              },
+            },
+          },
+          "source_of_funding": {
+            "title": "source_of_funding",
+            "meta": {
+              "order": [
+                "value",
+                "detail",
+              ],
+              "mapping": {
+                "value": {
+                  "title": "value"
+                },
+                "detail": {
+                  "title": "detail"
+                },
+              },
+            },
+          },
+        },
       },
     };
   },
-  components: {
-    ProfileDetail,
-    vueDropzone: vue2Dropzone,
-    Charts,
-    ExcelAlert,
-  },
-  mounted() {
-    this.axios.get(`/v1/moms?kode_wiup=${this.$route.params.wiup}`).then((response) => {
-      this.info = response.data.perusahaan;
+  beforeUpdate: function() {
+    this.$nextTick(() => {
+      $('table').bootstrapTable({
+        pagination: true,
+        search: true,
+        showColumns: true,
+        stickyHeader: true,
+      });
     });
-  },
-  methods: {
-    checkUploadType(file) {
-      if (file.type.match('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
-        console.log('ba');
-      }
-    },
   },
 };
 </script>
 
 <style scoped>
-img{
-  width: 4.5rem;
-}
-
-.vue-dropzone{
-  border:2px dashed #b7b7b7;
-  background-color:rgba(255,255,255,0.6);
-  margin-top:3px;
-  color:#6d8671;
-}
+  @import url('../../../../node_modules/bootstrap-table/dist/bootstrap-table.min.css');
 </style>
