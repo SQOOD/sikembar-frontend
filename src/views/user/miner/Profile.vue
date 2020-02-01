@@ -20,8 +20,7 @@
           img(src='@/assets/img/excel.svg')
           h5.font-weight-bold Jatuhkan Berkas Formulir SIKEMBAR disini
             br
-            small atau klik disini untuk mencari berkas dalam alat anda.
-        charts
+            small atau klik disini untuk mencari berkas dalam komputer anda.
 </template>
 
 <script>
@@ -35,6 +34,7 @@ import ProfileDetail from '@/components/widgets/profile/Detail.vue';
 import Charts from '@/components/charts/RandomCharts.vue';
 import ExcelAlert from '@/components/alerts/ExcelFile.vue';
 import template from '@/lib/json-map/ReportFinance';
+import template3 from '@/lib/json-map/ReportGood';
 
 import 'vue2-dropzone/dist/vue2Dropzone.min.css';
 
@@ -85,16 +85,68 @@ export default {
     checkUploadType(file) {
       if (
         file.type.match('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        && file.name.match('/form *be*.*.xlsx?/gi')) {
+        && file.name.match(/form *be*.*.xlsx?/gi)) {
         xlsxParser
           .onFileSelection(file, { showNullProperties: true, hideEmptyRows: true })
           .then((data) => {
-            const str = JSON.stringify(data)
-              .replace('/"0"/g', null);
-            console.log(str);
+            const A = data.A.map(o => Object.assign(o, { Kategori: 'A' }));
+            const B = data.B.map(o => Object.assign(o, { Kategori: 'B' }));
+            const C = data.C.map(o => Object.assign(o, { Kategori: 'C' }));
+            const D = data.D.map(o => Object.assign(o, { Kategori: 'D' }));
+            const E = data.E.map(o => Object.assign(o, { Kategori: 'E' }));
+            const F = data.F.map(o => Object.assign(o, { Kategori: 'F' }));
+            const G = data.G.map(o => Object.assign(o, { Kategori: 'G' }));
+            const H = data.H.map(o => Object.assign(o, { Kategori: 'H' }));
+            const I = data.I.map(o => Object.assign(o, { Kategori: 'I' }));
+            const J = data.J.map(o => Object.assign(o, { Kategori: 'J' }));
+            const K = data.K.map(o => Object.assign(o, { Kategori: 'K' }));
+            const L = data.L.map(o => Object.assign(o, { Kategori: 'L' }));
+            const M = data.M.map(o => Object.assign(o, { Kategori: 'M' }));
+            const N = data.N.map(o => Object.assign(o, { Kategori: 'N' }));
+            const O = data.O.map(o => Object.assign(o, { Kategori: 'O' }));
+            const P = data.P.map(o => Object.assign(o, { Kategori: 'P' }));
+            const Q = data.Q.map(o => Object.assign(o, { Kategori: 'Q' }));
+            const R = data.R.map(o => Object.assign(o, { Kategori: 'R' }));
+            const S = data.S.map(o => Object.assign(o, { Kategori: 'S' }));
+            const T = data.T.map(o => Object.assign(o, { Kategori: 'T' }));
+            let varData = A.concat(B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T);
+            varData = transform(varData, template3);
+            const x = {
+              term: data.Konfigurasi[0].Termin.toUpperCase(),
+              year: parseInt(data.Konfigurasi[0].Tahun, 10),
+              report_type: data.Konfigurasi[0]['Tipe Laporan'].toUpperCase(),
+              currency: data.Konfigurasi[0]['Mata Uang'].toUpperCase(),
+              rate: parseInt(data.Konfigurasi[0].Kurs, 10),
+              procurement:
+                {
+                  create:
+                  [
+                    ...varData,
+                  ],
+                },
+            };
+            this.$apollo.query({
+              query: gql`query{me{username}}`,
+            }).then((me) => {
+              const y = { file_path: 'none', user: { connect: { username: me.data.me.username } } };
+              const z = { ...x, ...y };
+              this.$apollo.mutate({
+                mutation: gql`
+                mutation($data: ReportGoodCreateInput!) {
+                  createOneReportGood(
+                    data:$data
+                  )
+                  {currency}
+                }
+                `,
+                variables: {
+                  data: z,
+                },
+              });
+            });
           });
       } else if (file.type.match('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-      && file.name.match('/form *lap*.*.xlsx?/gi')) {
+      && file.name.match(/form *lap*.*.xlsx?/gi)) {
         xlsxParser
           .onFileSelection(file, { showNullProperties: true, hideEmptyRows: true })
           .then((data) => {

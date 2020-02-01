@@ -11,7 +11,7 @@ const USER_ROLE = 'hermes';
 const USER_NAME = 'ares';
 
 // Http endpoint
-const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:4000';
+const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:4000/';
 
 // Config
 const defaultOptions = {
@@ -75,13 +75,12 @@ export function createProvider(options = {}) {
 }
 
 // Manually call this when user log in
-export async function onLogin(apolloClient, token, role, name) {
-  // if (typeof window.$cookies !== 'undefined' && token) {
-  window.$cookies.set(AUTH_TOKEN, token, '20m', '/', false);
-  window.$cookies.set(USER_ROLE, role);
-  window.$cookies.set(USER_NAME, name);
-  console.log(token);
-  // }
+export async function onLogin(apolloClient, token, role) {
+  if (typeof localStorage !== 'undefined' && token) {
+    localStorage.setItem(AUTH_TOKEN, token);
+    localStorage.setItem(USER_ROLE, role);
+    localStorage.setItem(USER_NAME, role);
+  }
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
   try {
     await apolloClient.resetStore();
@@ -93,11 +92,9 @@ export async function onLogin(apolloClient, token, role, name) {
 
 // Manually call this when user log out
 export async function onLogout(apolloClient) {
-  // if (typeof window !== 'undefined') {
-  window.$cookies.remove(AUTH_TOKEN, null, null);
-  window.$cookies.remove(USER_ROLE, null, null);
-  window.$cookies.remove(USER_NAME, null, null);
-  // }
+  if (typeof localStorage !== 'undefined') {
+    localStorage.removeItem(AUTH_TOKEN);
+  }
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
   try {
     await apolloClient.resetStore();

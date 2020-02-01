@@ -33,6 +33,7 @@
             p.typo.error.pt-2(v-if="submitStatus === 'ERROR'") Mohon isi formulir dengan tepat.
             p.typo.error.pt-2(v-if="submitStatus === 'FAIL'") Akun Pengguna atau Kata Sandi salah.
             p.typo.wait.pt-2(v-if="submitStatus === 'PENDING'") Mengirimkan data.
+      router-link.nav-link.text-danger(to='/forgot-password') Lupa Kata Sandi
       router-link.nav-link(to='/') Kembali ke Beranda
     .card-footer.row.align-items-center
       small.font-weight-bold Bimus Mineral 4.0
@@ -87,11 +88,10 @@ export default {
             password: this.password,
           },
         }).then((data) => {
-        // Result
           onLogin(this.$apollo.provider.defaultClient,
             data.data.login.accessToken,
             data.data.login.user.role,
-            data.data.login.user.username);
+            data.data.login.user.name);
           this.submitStatus = 'OK';
           this.$router.push(`/miner/${data.data.login.user.username}`);
         }).catch((error) => {

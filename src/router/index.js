@@ -18,6 +18,19 @@ const routes = [
     },
   },
   {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    components: {
+      default: () => import('@/views/auth/ForgotPassword.vue'),
+      menu: () => import('@/components/navigations/state/Login.vue'),
+    },
+    meta: {
+      breadcrumb:
+        { label: 'Forgot Password' },
+      auth: false,
+    },
+  },
+  {
     path: '/about',
     name: 'about',
     component: () => import('@/views/About.vue'),
@@ -201,7 +214,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.auth === false || window.$cookies.isKey('apollo') != null) {
+  if (to.meta.auth === false || localStorage.getItem('apollo') != null) {
     next();
   } else {
     router.push('/login');

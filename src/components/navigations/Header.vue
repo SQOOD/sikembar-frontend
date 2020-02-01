@@ -27,8 +27,8 @@ export default {
     };
   },
   mounted() {
-    this.auth = window.$cookies.get('apollo');
-    this.role = window.$cookies.get('hermes');
+    this.auth = localStorage.getItem('apollo');
+    this.role = localStorage.getItem('hermes');
   },
 };
 </script>

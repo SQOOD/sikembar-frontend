@@ -1,139 +1,64 @@
-const template = {
-  year: {
-    path: 'year',
+/* eslint-disable camelcase */
+function checkUnit(item) {
+  const x = (item === 'PRODUSEN') ? 'PRODUCER' : 'Supplier';
+  return x;
+}
+
+const template3 = {
+  detail: {
+    path: 'Jenis Barang',
   },
-  rate: {
-    path: 'rate',
+  spec: {
+    path: 'Spesifikasi',
   },
-  report_type: {
-    path: 'report_type',
+  volume_value: {
+    path: 'Kuantitas',
+    transform: val => parseInt(val, 10),
   },
-  assumptionValue: {
-    path: 'assumption',
-    transform: val => val.map(assumption => assumption.rate),
+  unit_price_type: {
+    path: 'Tipe Pengadaan',
+    // transform: val => ((val !== null) ? val.replace(/"(\w+)"/g, '$!') : val),
   },
-  assumptionDetail: {
-    path: 'assumption',
-    transform: val => val.map(assumption => assumption.detail),
+  unit_price: {
+    path: 'Harga Satuan',
+    transform: val => parseInt(val, 10),
   },
-  assumptionRate: {
-    path: 'assumption',
-    transform: val => val.map(assumption => assumption.rate),
+  category: {
+    path: 'Kategori',
+    // transform: val => ((val !== null) ? val.replace(/"(\w+)"/g, '$!') : val),
   },
-  assumptionPrice: {
-    path: 'assumption',
-    transform: val => val.map(assumption => assumption.price),
+  project_area: {
+    path: 'Area Pekerjaan',
+    // transform: val => ((val !== null) ? val.replace(/"(\w+)"/g, '$!') : val),
   },
-  assumptionVolumeUnit: {
-    path: 'assumption',
-    transform: val => val.map(assumption => assumption.volume_unit),
+  country_of_origin: {
+    path: 'Negara',
+    // transform: val => ((val !== null) ? val.replace(/"(\w+)"/g, '$!') : val),
   },
-  assumptionCutOff: {
-    path: 'assumption',
-    transform: val => val.map(assumption => assumption.cut_off),
+  province_of_origin: {
+    path: 'Provinsi',
+    // transform: val => ((val !== null) ? val.replace(/"(\w+)"/g, '$!') : val),
   },
-  assumptionCutOffUnit: {
-    path: 'assumption.cut_off_unit',
+  tkdn_type: {
+    path: 'Tipe TKDN',
+    // transform: val => ((val !== null) ? val.replace(/"(\w+)"/g, '$!') : val),
   },
-  assumptionCurrency: {
-    path: 'assumption.currency',
+  tkdn: {
+    path: 'TKDN',
+    transform: val => parseInt(val, 10),
   },
-  balanceValue: {
-    path: 'balance.value',
+  district_of_origin: {
+    path: 'Kota / Kabupaten',
+    // transform: val => ((val !== null) ? val.replace(/"(\w+)"/g, '$!') : val),
   },
-  balanceDetail: {
-    path: 'balance.detail',
+  current_district: {
+    path: 'Sesuai Lokasi',
+    // transform: val => ((val !== null) ? val.replace(/"(\w+)"/g, '$!') : val),
   },
-  balanceCategory: {
-    path: 'balance.category',
-  },
-  balanceSubCategory: {
-    path: 'balance.sub_category',
-  },
-  budgetsValue: {
-    path: 'budgets.value',
-  },
-  budgetsDetail: {
-    path: 'budgets.detail',
-  },
-  capitalBudgetValue: {
-    path: 'capital_budget.value',
-  },
-  capitalBudgetDetail: {
-    path: 'capital_budget.detail',
-  },
-  cashflowValue: {
-    path: 'cashflow.value',
-  },
-  cashflowCategory: {
-    path: 'cashflow.category',
-  },
-  cashflowDetail: {
-    path: 'cashflow.detail',
-  },
-  costOfGoodValue: {
-    path: 'cost_of_good.value',
-  },
-  costOfGoodDetail: {
-    path: 'cost_of_good.detail',
-  },
-  fuelRate: {
-    path: 'fuel.rate',
-  },
-  fuelPrice: {
-    path: 'fuel.price',
-  },
-  fuelCurrency: {
-    path: 'fuel.currency',
-  },
-  investmentValue: {
-    path: 'investment.value',
-  },
-  investmentDetail: {
-    path: 'investment.detail',
-  },
-  lostProfitValue: {
-    path: 'lost_profit.value',
-  },
-  lostProfitDetail: {
-    path: 'lost_profit.detail',
-  },
-  lostProfitCategory: {
-    path: 'lost_profit.detail',
-  },
-  otherFinanceValue: {
-    path: 'other_finance.value',
-  },
-  otherFinanceDetail: {
-    path: 'other_finance.detail',
-  },
-  operationCostValue: {
-    path: 'operation_cost.value',
-  },
-  operationCostDetail: {
-    path: 'operation_cost.detail',
-  },
-  royaltyValue: {
-    path: 'royalty.value',
-  },
-  royaltyDetail: {
-    path: 'royalty.detail',
-  },
-  stateRevenueDetail: {
-    path: 'state_revenue.detail',
-  },
-  stateRevenueCategory: {
-    path: 'state_revenue.category',
-  },
-  stateRevenueValue: {
-    path: 'state_revenue.value',
-  },
-  sourceOfFundingValue: {
-    path: 'source_of_funding.value',
-  },
-  sourceOfFundingDetail: {
-    path: 'source_of_funding.detail',
+  vendor_type: {
+    path: 'Produsen / Supplier',
+    transform: val => checkUnit(val),
   },
 };
 
-export default template;
+export default template3;
