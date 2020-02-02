@@ -70,7 +70,7 @@ export default {
       }`,
       variables() {
         return {
-          username: this.$route.params.userName,
+          username: this.$route.params.username,
         };
       },
     },

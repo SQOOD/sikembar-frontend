@@ -2,22 +2,39 @@
   .container
     .row.mt-3
       .col-md-5
-        profile-detail(
+        profile-detail( v-if='user'
           :companyName= 'user.username',
           :permission= 'user.company_permission',
-          :address= 'user.address',
           :email= 'user.email',
-          :npwp= 'user.npwp',
         )
+        vue-element-loading( v-else :active='isActive' spinner="bar-fade-scale" color="#3434334")
       .col-md-7
-        h4.font-weight-bold.text-center Daftar Laporan Keuangan
-        report( :rows='reportFinances' :link='userName' )
-        router-link.mb-5(:to="{name : 'view-report-finance'}").btn.btn-sm.btn-primary.w-100
-          | Lihat Semua Laporan
-        h4.font-weight-bold.text-center Daftar Laporan Belanja Barang
-        report( :rows='reportGoods' :link='userName' )
-        router-link.mb-5(:to="{name : 'view-report-good'}").btn.btn-sm.btn-primary.w-100
-          | Lihat Semua Laporan
+        section(v-if='reportFinances')
+          h4.font-weight-bold.text-center Daftar Laporan Keuangan
+          vue-good-table(:columns='columns' :rows='reportFinances').mb-3
+            template(slot='table-row' slot-scope='props')
+              span(v-if='props.column.label == "Aksi"')
+                router-link.btn.btn-sm.btn-info(
+                  :to="{ name: 'view-report-finance' , params: { reportID: props.row.id }  }"
+                  )
+                  font-awesome-icon(:icon='["fas", "file-alt"]')
+                  | Periksa
+          router-link.mb-5(:to="{name : 'view-report-finances'}").btn.btn-sm.btn-primary.w-100
+            | Lihat Semua Laporan
+        vue-element-loading( v-else :active='isActive' spinner="bar-fade-scale" color="#3434334")
+        section(v-if='reportGoods')
+          h4.font-weight-bold.text-center Daftar Laporan Belanja Barang
+          vue-good-table(:columns='columns' :rows='reportGoods').mb-3
+            template(slot='table-row' slot-scope='props')
+              span(v-if='props.column.label == "Aksi"')
+                router-link.btn.btn-sm.btn-info(
+                  :to="{ name: 'view-report-finance' , params: { reportID: props.row.id }  }"
+                  )
+                  font-awesome-icon(:icon='["fas", "file-alt"]')
+                  | Periksa
+          router-link.mb-5(:to="{name : 'view-report-goods'}").btn.btn-sm.btn-primary.w-100
+            | Lihat Semua Laporan
+        vue-element-loading( v-else :active='isActive' spinner="bar-fade-scale" color="#3434334")
 </template>
 
 <script>
@@ -25,7 +42,6 @@ import gql from 'graphql-tag';
 
 import ProfileDetail from '@/components/widgets/profile/Detail.vue';
 import Commodity from '@/components/widgets/profile/admin/Commodity.vue';
-import Report from '@/components/widgets/profile/Report.vue';
 
 export default {
   apollo: {
@@ -54,40 +70,61 @@ export default {
       }`,
     },
     user: {
-      query: gql`query User($username: String!){
+      query: gql`query user($username: String!){
         user(where:{username:$username}){
           username
-          role
-          commodity
-          company_type
           company_name
-          npwp
-          wiup
-          email
-          address
           company_permission
         }
       }`,
       variables() {
         return {
-          username: this.$route.params.userName,
+          username: this.username,
         };
       },
     },
   },
   data() {
     return {
-      userName: 'rendra',
+      isActive: true,
+      username: this.$route.params.username,
+      columns: [
+        {
+          label: 'ID Laporan',
+          field: 'id',
+          tdClass: 'text-center font-weight-bold',
+        },
+        {
+          label: 'Perusahaan',
+          field: this.fieldFN,
+          tdClass: 'text-center font-weight-bold',
+        },
+        {
+          label: 'Tanggal Unggah',
+          field: 'createdAt',
+          type: 'date',
+          dateInputFormat: 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'',
+          dateOutputFormat: 'MMM-dd-yyyy HH:mm',
+          tdClass: 'text-center font-weight-bold',
+        },
+        {
+          label: 'Aksi',
+          field: 'id',
+        },
+      ],
     };
   },
   components: {
     ProfileDetail,
     Commodity,
-    Report,
-  },
-  mounted() {
   },
   methods: {
+    fieldFN(x) {
+      return `${x.user.company_type}. ${x.user.company_name}`;
+    },
+  },
+  created() {
+    this.$forceUpdate();
   },
 };
 </script>

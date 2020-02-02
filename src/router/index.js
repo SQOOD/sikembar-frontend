@@ -73,9 +73,9 @@ const routes = [
     },
   },
   {
-    path: '/miner/:userName',
+    path: '/miner/:username',
     name: 'miner',
-    redirect: '/miner/:userName/profile',
+    redirect: '/miner/:username/profile',
     components: {
       menu: () => import('@/components/navigations/state/Miner.vue'),
       default: () => import('@/views/pages/Profile.vue'),
@@ -108,10 +108,10 @@ const routes = [
     ],
   },
   {
-    path: '/admin/:userName/',
+    path: '/admin/:username/',
     name: 'admin',
     alias: '/admin',
-    redirect: '/admin/:userName/profile',
+    redirect: '/admin/:username/profile',
     components: {
       default: () => import('@/views/pages/Profile.vue'),
       menu: () => import('@/components/navigations/state/Staff.vue'),
@@ -135,20 +135,20 @@ const routes = [
         },
       },
       {
-        path: 'view-report/:reportID',
-        name: 'view-report',
+        path: 'view-report-finance/:reportID',
+        name: 'view-report-finance',
         components: {
-          default: () => import('@/views/user/staff/reports/Detail.vue'),
+          default: () => import('@/views/user/staff/reports/DetailFinance.vue'),
         },
         props: true,
         meta: {
           breadcrumb:
-            { label: 'Profil' },
+            { label: 'Report Finance' },
         },
       },
       {
-        path: 'view-report-good',
-        name: 'view-report-good',
+        path: 'view-report-goods',
+        name: 'view-report-goods',
         components: {
           default: () => import('@/views/user/staff/reports/ListGood.vue'),
         },
@@ -159,8 +159,8 @@ const routes = [
         },
       },
       {
-        path: 'view-report-finance',
-        name: 'view-report-finance',
+        path: 'view-report-finances',
+        name: 'view-report-finances',
         components: {
           default: () => import('@/views/user/staff/reports/ListFinance.vue'),
         },
@@ -195,7 +195,7 @@ const routes = [
         },
       },
       {
-        path: 'view-user/miner/:userName',
+        path: 'view-user/miner/:user',
         name: 'view-miner',
         components: {
           default: () => import('@/views/user/miner/Profile.vue'),
@@ -207,7 +207,7 @@ const routes = [
         },
       },
       {
-        path: 'view-user/vendor/:userName',
+        path: 'view-user/vendor/:user',
         name: 'view-vendor',
         components: {
           default: () => import('@/views/user/vendor/Profile.vue'),
@@ -219,7 +219,7 @@ const routes = [
         },
       },
       {
-        path: 'view-user/staff/:userName',
+        path: 'view-user/staff/:user',
         name: 'view-staff',
         components: {
           default: () => import('@/views/user/staff/Profile.vue'),

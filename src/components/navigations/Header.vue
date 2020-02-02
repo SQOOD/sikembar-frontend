@@ -28,7 +28,6 @@ export default {
   },
   mounted() {
     this.auth = localStorage.getItem('apollo');
-    this.role = localStorage.getItem('hermes');
   },
 };
 </script>
