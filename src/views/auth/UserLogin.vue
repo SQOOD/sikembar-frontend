@@ -91,9 +91,24 @@ export default {
           onLogin(this.$apollo.provider.defaultClient,
             data.data.login.accessToken,
             data.data.login.user.role,
-            data.data.login.user.name);
+            data.data.login.user.username);
           this.submitStatus = 'OK';
-          this.$router.push(`/miner/${data.data.login.user.username}`);
+          const x = data.data.login.user;
+          let routerRole = '';
+          if (
+            x.role === 'ADMIN'
+            || x.role === 'EVALUATOR'
+            || x.role === 'SUPERINTENDENT'
+          ) {
+            routerRole = 'admin';
+          } else if (
+            x.role === 'VENDOR'
+          ) {
+            routerRole = 'vendor';
+          } else {
+            routerRole = 'miner';
+          }
+          this.$router.push(`/${routerRole}/${x.username}`);
         }).catch((error) => {
           // Error
           console.error(error);

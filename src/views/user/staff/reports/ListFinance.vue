@@ -1,37 +1,58 @@
 <template lang="pug">
 #report.container.mt-4
   h1 Daftar Laporan Belum Disetujui
-  vue-good-table(:columns='columns' :rows='rows').mb-3
+  vue-good-table(:columns='columns' :rows='reportFinances').mb-3
     template(slot='table-row' slot-scope='props')
-      span(v-if='props.column.field == "check"')
-        router-link.btn.btn-sm.btn-info(to='#')
+      span(v-if='props.column.label == "Aksi"')
+        router-link.btn.btn-sm.btn-info(
+          :to="{ name: 'view-report' , params: { reportID: props.row.id }  }"
+        )
           font-awesome-icon(:icon='["fas", "file-alt"]')
           | Periksa Laporan
 </template>
 
 <script>
+import gql from 'graphql-tag';
+
 export default {
+  apollo: {
+    reportFinances: {
+      query: gql`query reportFinances{
+        reportFinances(where:{approved:{not:true}}){
+          id
+          user{
+            company_name
+            company_type
+          }
+          createdAt
+        }
+      }`,
+    },
+  },
   data() {
     return {
       columns: [
         {
-          label: 'Laporan',
+          label: 'ID Laporan',
           field: 'id',
+          tdClass: 'text-center font-weight-bold',
         },
         {
           label: 'Perusahaan',
-          field: 'company',
+          field: this.fieldFN,
+          tdClass: 'text-center font-weight-bold',
         },
         {
           label: 'Tanggal Unggah',
-          field: 'sentAt',
+          field: 'createdAt',
           type: 'date',
-          dateInputFormat: 'yyyy-MM-dd',
-          dateOutputFormat: 'MMM-dd-yyyy',
+          dateInputFormat: 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'',
+          dateOutputFormat: 'MMM-dd-yyyy HH:mm',
+          tdClass: 'text-center font-weight-bold',
         },
         {
-          label: 'Cek Laporan',
-          field: 'check',
+          label: 'Aksi',
+          field: 'id',
         },
       ],
       rows: [

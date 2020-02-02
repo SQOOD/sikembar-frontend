@@ -75,11 +75,16 @@ export function createProvider(options = {}) {
 }
 
 // Manually call this when user log in
-export async function onLogin(apolloClient, token, role) {
+export async function onLogin(apolloClient, token, role, name) {
   if (typeof localStorage !== 'undefined' && token) {
     localStorage.setItem(AUTH_TOKEN, token);
-    localStorage.setItem(USER_ROLE, role);
-    localStorage.setItem(USER_NAME, role);
+    // hack for undisclosure staff
+    if (role === 'ADMIN' || role === 'EVALUATOR' || role === 'SUPERINTENDENT') {
+      localStorage.setItem(USER_ROLE, 'ADMIN');
+    } else {
+      localStorage.setItem(USER_ROLE, role);
+    }
+    localStorage.setItem(USER_NAME, name);
   }
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
   try {

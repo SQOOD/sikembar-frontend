@@ -3,6 +3,9 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
+// const role = localStorage.getItem('hermes');
+// const username = localStorage.getItem('ares');
+
 const routes = [
   {
     path: '/',
@@ -132,6 +135,42 @@ const routes = [
         },
       },
       {
+        path: 'view-report/:reportID',
+        name: 'view-report',
+        components: {
+          default: () => import('@/views/user/staff/reports/Detail.vue'),
+        },
+        props: true,
+        meta: {
+          breadcrumb:
+            { label: 'Profil' },
+        },
+      },
+      {
+        path: 'view-report-good',
+        name: 'view-report-good',
+        components: {
+          default: () => import('@/views/user/staff/reports/ListGood.vue'),
+        },
+        props: true,
+        meta: {
+          breadcrumb:
+            { label: 'Profil' },
+        },
+      },
+      {
+        path: 'view-report-finance',
+        name: 'view-report-finance',
+        components: {
+          default: () => import('@/views/user/staff/reports/ListFinance.vue'),
+        },
+        props: true,
+        meta: {
+          breadcrumb:
+            { label: 'Profil' },
+        },
+      },
+      {
         path: 'create-user',
         name: 'create-user',
         components: {
@@ -164,7 +203,7 @@ const routes = [
         props: true,
         meta: {
           breadcrumb:
-            { label: 'Daftar Pengguna' },
+            { label: 'Lihat Laporan' },
         },
       },
       {

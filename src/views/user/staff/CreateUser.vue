@@ -25,6 +25,12 @@
               p.error(v-if="!$v.password.minLength")
                 | Minimum {{$v.password.$params.minLength.min}} karakter,
                 | dan kombinasi antara angka dan huruf.
+              label.col-form-label-sm.font-weight-bold(for='sandiPengguna') Ulang Kata Sandi
+              input#ulangSandiPengguna.form-control.form-control-sm(type='password'
+                v-model.trim.lazy="$v.repeatPassword.$model"
+                placeholder='Ulang Kata Sandi' :class="{ 'is-invalid': $v.repeatPassword.$error }")
+              p.error(v-if="!$v.repeatPassword.sameAsPassword")
+                | Harus identik dengan Kata Sandi.
               label.col-form-label-sm.font-weight-bold(for='Telepon') Telepon
               input#Telepon.form-control.form-control-sm(type='text'
                 aria-describedby='Telepon' placeholder='Masukan telepon'
@@ -69,6 +75,29 @@
                 label.col-form-label-sm.font-weight-bold(for='alamat') Alamat Perusahaan
                 textarea#alamat.form-control.form-control-sm(type='text'
                   aria-describedby='address' v-model='address' placeholder='Alamat Perusahaan')
+              fieldset(v-show='role === "VENDOR"')
+                label.col-form-label-sm.font-weight-bold(for='tipeDanNamaPerusahaan')
+                  | Nama dan Tipe Perusahaan
+                .input-group#tipeDanNamaPerusahaan
+                  input#tipePerusahaan.form-control.form-control-sm(type='text'
+                    v-model='company_type')
+                  input#namaPerusahaan.form-control.form-control-sm(type='text'
+                    v-model='company_name')
+                label.col-form-label-sm.font-weight-bold(for='npwp') NPWP
+                input#npwp.form-control.form-control-sm(type='text'
+                  aria-describedby='npwp' v-model='npwp' placeholder='NPWP')
+                label.col-form-label-sm.font-weight-bold(for='email') EMAIL
+                input#email.form-control.form-control-sm(type='text'
+                  aria-describedby='email' v-model='email' placeholder='EMAIL')
+                label.col-form-label-sm.font-weight-bold(for='alamat') Alamat Perusahaan
+                textarea#alamat.form-control.form-control-sm(type='text'
+                  aria-describedby='address' v-model='address' placeholder='Alamat Perusahaan')
+              fieldset(v-show='\
+              ( role === "ADMIN" || role === "SUPERINTENDENT" || role === "EVALUATOR" )\
+              ')
+                label.col-form-label-sm.font-weight-bold(for='email') EMAIL
+                input#email.form-control.form-control-sm(type='text'
+                  aria-describedby='email' v-model='email' placeholder='EMAIL')
             button.btn-block.btn.btn-primary.btn-sm(type='submit'
               :disabled="submitStatus === 'PENDING'") BUAT PENGGUNA
             p.typo.success.pt-2(v-if="submitStatus === 'OK'") Sukses masuk.
@@ -82,6 +111,7 @@ import {
   minLength,
   numeric,
   alphaNum,
+  sameAs,
 } from 'vuelidate/lib/validators';
 import gql from 'graphql-tag';
 
@@ -91,6 +121,7 @@ export default {
       data_role: '',
       username: '',
       password: '',
+      repeatPassword: '',
       company_permission: '',
       role: '',
       commodity: '',
@@ -103,17 +134,21 @@ export default {
       address: '',
       submitStatus: null,
       options: ['ADMIN', 'EVALUATOR', 'SUPERINTENDENT', 'MINER', 'VENDOR'],
+      company_options: ['CV', 'PT'],
     };
   },
   validations: {
     username: {
       required,
-      minLength: minLength(4),
+      minLength: minLength(8),
       alphaNum,
     },
     password: {
       required,
       minLength: minLength(8),
+    },
+    repeatPassword: {
+      sameAsPassword: sameAs('password'),
     },
     wiup: {
       minLength: minLength(8),
@@ -141,6 +176,18 @@ export default {
     },
     async submit() {
       console.log('submit!');
+      if (this.role !== 'MINER' || this.role !== 'VENDOR') {
+        this.company_type = 'NOT_AVAILABLE';
+      }
+      if (this.role !== 'MINER') {
+        this.commodity = 'NOT_AVAILABLE';
+      }
+
+      if (this.role === 'VENDOR') {
+        this.company_permission = 'VENDOR';
+      } else if (this.role === 'ADMIN' || this.role === 'SUPERINTENDENT' || this.role === 'EVALUATOR') {
+        this.company_permission = 'MINERBA';
+      }
       this.$v.$touch();
       if (this.$v.$invalid) {
         this.submitStatus = 'ERROR';
@@ -200,10 +247,11 @@ export default {
         }).then(() => {
         // Result
           this.submitStatus = 'OK';
-          this.$router.push(`/admin/${this.$router.params.userName}/profile`);
+          this.$router.push(`/admin/${localStorage.getItem('ares')}/profile`);
         }).catch((error) => {
           // Error
           console.error(error);
+          this.submitStatus = 'ERROR';
         });
       }
     },

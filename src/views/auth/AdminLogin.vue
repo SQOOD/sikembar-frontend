@@ -95,8 +95,22 @@ export default {
             data.data.login.accessToken,
             data.data.login.user.role,
             data.data.login.user.username);
-          this.submitStatus = 'OK';
-          this.$router.push(`/admin/${data.data.login.user.username}/profile`);
+          const x = data.data.login.user;
+          let routerRole = '';
+          if (
+            x.role === 'ADMIN'
+            || x.role === 'EVALUATOR'
+            || x.role === 'SUPERINTENDENT'
+          ) {
+            routerRole = 'admin';
+          } else if (
+            x.role === 'VENDOR'
+          ) {
+            routerRole = 'vendor';
+          } else {
+            routerRole = 'miner';
+          }
+          this.$router.push(`/${routerRole}/${x.username}`);
         }).catch((error) => {
           // Error
           console.error(error);

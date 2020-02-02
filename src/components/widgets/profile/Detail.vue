@@ -5,13 +5,12 @@ div
       .row.no-gutters
         .col-sm-4
           img.img-thumbnail.rounded-circle(src='@/assets/img/default-profile.png')
-        .col-sm-8.align-self-center(v-if='companyType!=""')
-          h1.mb-1 {{companyType}}. {{companyName}}
+        .col-sm-8.align-self-center
+          h1.mb-1(v-if='companyType!=""') {{companyType}}. {{companyName}}
+          h1.mb-1(v-else) {{companyName}}
           router-link(to='#').badge-primary.badge {{permission}}
           router-link(to='#').badge-primary.badge {{commodity}}
           p {{address}}, {{province}}
-        .col-sm-8.align-self-center(v-else)
-          h1.mb-1 {{userName}}
   #mail.detail.card.shadowbox(v-show='email!=""')
     .card-body.pt-2.pb-2
       h6.mb-0 E-Mail
