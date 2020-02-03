@@ -29,8 +29,15 @@
               p.error(v-if="!$v.password.minLength")
                 | Minimum {{$v.password.$params.minLength.min}} karakter,
                 | dan kombinasi antara angka dan huruf.
-            button.btn-block.btn.btn-primary.btn-sm(type='submit'
-              :disabled="submitStatus === 'PENDING'") Kirim
+            vue-recaptcha(
+              sitekey="6LdQJdUUAAAAAF9qTawLsQYbElLyWldo_wTGUdHL"
+              size="invisible"
+              ref="recaptcha"
+              @verify="onVerify"
+              @expired="onExpired"
+              :loadRecaptchaScript="true")
+              button.btn-block.btn.btn-primary.btn-sm(
+                :disabled="submitStatus === 'PENDING'") Kirim
             p.typo.success.pt-2(v-if="submitStatus === 'OK'") Sukses masuk.
             p.typo.error.pt-2(v-if="submitStatus === 'ERROR'") Mohon isi formulir dengan tepat.
             p.typo.error.pt-2(v-if="submitStatus === 'FAIL'") Akun Pengguna atau Kata Sandi salah.
@@ -43,9 +50,13 @@
 <script>
 import { required, minLength, numeric } from 'vuelidate/lib/validators';
 import gql from 'graphql-tag';
+import VueRecaptcha from 'vue-recaptcha';
 import { onLogin } from '../../vue-apollo';
 
 export default {
+  components: {
+    'vue-recaptcha': VueRecaptcha,
+  },
   data() {
     return {
       username: '',
@@ -129,6 +140,7 @@ export default {
   border-top:0;
   border-bottom:0;
   border-color:rgba(0,0,0,0.3);
+  min-width: 376px;
 }
 
 #login > .card-body{

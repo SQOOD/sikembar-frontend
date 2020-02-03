@@ -7,7 +7,6 @@ import VueAxios from 'vue-axios';
 import Vue2Crumbs from 'vue-2-crumbs';
 import VueGoodTablePlugin from 'vue-good-table';
 import vSelect from 'vue-select';
-import VueElementLoading from 'vue-element-loading';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faFileAlt } from '@fortawesome/free-solid-svg-icons';
@@ -28,7 +27,6 @@ import 'vue-good-table/dist/vue-good-table.css';
 import 'vue-select/dist/vue-select.css';
 
 Vue.component('v-select', vSelect);
-Vue.component('VueElementLoading', VueElementLoading);
 Vue.use(vbclass, router);
 Vue.use(VueLayers);
 Vue.use(Vuelidate);

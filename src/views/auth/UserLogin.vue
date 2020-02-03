@@ -27,6 +27,11 @@
             p#disclaimer.mb-3 *) Dengan menekan tombol "Kirim", anda telah menyetujui
               router-link(to='/about')  ketentuan yang berlaku
               | .
+            vue-recaptcha(
+              ref="recaptcha"
+              sitekey="6LdQJdUUAAAAAF9qTawLsQYbElLyWldo_wTGUdHL"
+              size="invisible"
+              :loadRecaptchaScript="true")
             button.btn-block.btn.btn-primary.btn-sm(type='submit'
               :disabled="submitStatus === 'PENDING'") Kirim
             p.typo.success.pt-2(v-if="submitStatus === 'OK'") Sukses masuk.
@@ -42,9 +47,13 @@
 <script>
 import { required, minLength } from 'vuelidate/lib/validators';
 import gql from 'graphql-tag';
+import VueRecaptcha from 'vue-recaptcha';
 import { onLogin } from '../../vue-apollo';
 
 export default {
+  components: {
+    'vue-recaptcha': VueRecaptcha,
+  },
   data() {
     return {
       username: '',
@@ -65,14 +74,13 @@ export default {
   methods: {
     async submit() {
       console.log('submit!');
+      this.$refs.recaptcha.execute();
       this.$v.$touch();
       if (this.$v.$invalid) {
         this.submitStatus = 'ERROR';
       } else {
         this.submitStatus = 'PENDING';
         console.log('submitting');
-        // await this.$recaptchaLoaded();
-        // do your submit logic here
         this.$apollo.mutate({
           mutation: gql`mutation($username: String!, $password: String!){
             login(username:$username, password:$password){
@@ -127,6 +135,7 @@ export default {
   border-top:0;
   border-bottom:0;
   border-color:rgba(0,0,0,0.3);
+  min-width: 376px;
 }
 
 #login > .card-body{

@@ -7,7 +7,7 @@
           :permission= 'user.company_permission',
           :email= 'user.email',
         )
-        vue-element-loading( v-else :active='isActive' spinner="bar-fade-scale" color="#3434334")
+        span( v-else ) Loading ...
       .col-md-7
         section(v-if='reportFinances')
           h4.font-weight-bold.text-center Daftar Laporan Keuangan
@@ -21,20 +21,20 @@
                   | Periksa
           router-link.mb-5(:to="{name : 'view-report-finances'}").btn.btn-sm.btn-primary.w-100
             | Lihat Semua Laporan
-        vue-element-loading( v-else :active='isActive' spinner="bar-fade-scale" color="#3434334")
+        span( v-else ) Loading ...
         section(v-if='reportGoods')
           h4.font-weight-bold.text-center Daftar Laporan Belanja Barang
           vue-good-table(:columns='columns' :rows='reportGoods').mb-3
             template(slot='table-row' slot-scope='props')
               span(v-if='props.column.label == "Aksi"')
                 router-link.btn.btn-sm.btn-info(
-                  :to="{ name: 'view-report-finance' , params: { reportID: props.row.id }  }"
+                  :to="{ name: 'view-report-good' , params: { reportID: props.row.id }  }"
                   )
                   font-awesome-icon(:icon='["fas", "file-alt"]')
                   | Periksa
           router-link.mb-5(:to="{name : 'view-report-goods'}").btn.btn-sm.btn-primary.w-100
             | Lihat Semua Laporan
-        vue-element-loading( v-else :active='isActive' spinner="bar-fade-scale" color="#3434334")
+        span( v-else ) Loading ...
 </template>
 
 <script>
@@ -86,7 +86,6 @@ export default {
   },
   data() {
     return {
-      isActive: true,
       username: this.$route.params.username,
       columns: [
         {

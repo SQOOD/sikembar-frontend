@@ -135,6 +135,18 @@ const routes = [
         },
       },
       {
+        path: 'view-report-good/:reportID',
+        name: 'view-report-good',
+        components: {
+          default: () => import('@/views/user/staff/reports/DetailGood.vue'),
+        },
+        props: true,
+        meta: {
+          breadcrumb:
+            { label: 'Report Good' },
+        },
+      },
+      {
         path: 'view-report-finance/:reportID',
         name: 'view-report-finance',
         components: {

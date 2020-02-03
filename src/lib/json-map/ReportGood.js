@@ -44,7 +44,7 @@ const template3 = {
     // transform: val => ((val !== null) ? val.replace(/"(\w+)"/g, '$!') : val),
   },
   tkdn: {
-    path: 'TKDN',
+    path: 'Persentase TKDN',
     transform: val => parseInt(val, 10),
   },
   district_of_origin: {

@@ -18,7 +18,7 @@
     vue-good-table(:columns='capital_budget' :rows='reportFinance.capital_budget').mb-3
     h3 Arus Keuangan
     vue-good-table(:columns='cashflow' :rows='reportFinance.cashflow').mb-3
-  vue-element-loading( v-else :active='true' spinner="bar-fade-scale" color="#3434334")
+  span( v-else ) Loading ...
 </template>
 
 <script>

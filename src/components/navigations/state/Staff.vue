@@ -7,7 +7,7 @@ ul.navbar-nav.ml-auto
   li.nav-item
     router-link.nav-link(:to="{ name: 'admin-profile'}") Profil
   li.nav-item
-    a.btn.btn-secondary.nav-link(href='#' @click.prevent='logout') Keluar
+    a.nav-link(href='#' @click.prevent='logout') Keluar
 </template>
 
 <script>
@@ -20,7 +20,7 @@ export default {
     };
   },
   mounted() {
-    this.role = localStorage.getItem('apollo-rule');
+    this.role = localStorage.getItem('hermes');
   },
   methods: {
     logout() {
