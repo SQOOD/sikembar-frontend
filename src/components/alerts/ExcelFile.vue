@@ -1,7 +1,7 @@
 <template lang="pug">
 .alert.alert-warning.alert-dismissible.fade.show(role='alert')
   h6.alert-heading.font-weight-bold
-    a(:href='`https://github.com/SQOOD/sikembar-form/archive/1.0.2.zip`')
+    a(:href='`https://github.com/SQOOD/sikembar-form/archive/1.0.2.1.zip`')
       | Unduh berkas formulir SIKEMBAR disini.
   img.float-left(src='@/assets/img/excel.svg')
   p Formulir ini diperuntukan khususnya untuk administrasi SIKEMBAR dan hal - hal yang terkait.
@@ -17,8 +17,8 @@ export default {
   data() {
     return {
       publicPath: process.env.BASE_URL,
-      version: '29.1',
-      date: '31-12-1293',
+      version: '1.0.2.1',
+      date: '02-03-2020',
     };
   },
 };
