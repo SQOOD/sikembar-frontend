@@ -115,17 +115,23 @@ export default {
     };
   },
   methods: {
-    onCellClick(params) {
-      if (params.column.field === 'username') {
-        if (params.row.role === 'MINER') {
-          this.$router.push(`/admin/${this.$route.params.userName}/view-user/miner/${params.row.username}`);
-        } else if (params.row.role === 'VENDOR') {
-          this.$router.push(`/admin/${this.$route.params.userName}/view-user/vendor/${params.row.username}`);
-        } else {
-          this.$router.push(`/admin/${this.$route.params.userName}/view-user/staff/${params.row.username}`);
-        }
-      }
-    },
+    // onCellClick(params) {
+    //   if (params.column.field === 'username') {
+    //     if (params.row.role === 'MINER') {
+    //       this.$router.push(
+    //         `/admin/${this.$route.params.userName}/view-user/miner/${params.row.username}`
+    //       );
+    //     } else if (params.row.role === 'VENDOR') {
+    //       this.$router.push(
+    //         `/admin/${this.$route.params.userName}/view-user/vendor/${params.row.username}`
+    //       );
+    //     } else {
+    //       this.$router.push(
+    //         `/admin/${this.$route.params.userName}/view-user/staff/${params.row.username}`
+    //       );
+    //     }
+    //   }
+    // },
     toggleColumn(index) {
       // Set hidden to inverse of what it currently is
       this.$set(this.columns[index], 'hidden', !this.columns[index].hidden);
