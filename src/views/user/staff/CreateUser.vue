@@ -39,6 +39,10 @@
               p.error(v-if="!$v.phone.numeric") Gunakan format telepon yang benar.
               p.error(v-if="!$v.phone.minLength")
                 | Minimum {{$v.phone.$params.minLength.min}} karakter.
+              label.col-form-label-sm.font-weight-bold(for='email') EMAIL
+              input#email.form-control.form-control-sm(type='text'
+                aria-describedby='email' v-model='email' placeholder='EMAIL')
+              p.error(v-if="!$v.email.email") Gunakan format email yang benar.
               label.col-form-label-sm.font-weight-bold(for='wiup' v-show='role === "MINER"') WIUP
               .input-group(for='wiup' v-show='role === "MINER"')
                 input#akunPengguna.form-control.form-control-sm(type='text'
@@ -69,9 +73,6 @@
                 label.col-form-label-sm.font-weight-bold(for='npwp') NPWP
                 input#npwp.form-control.form-control-sm(type='text'
                   aria-describedby='npwp' v-model='npwp' placeholder='NPWP')
-                label.col-form-label-sm.font-weight-bold(for='email') EMAIL
-                input#email.form-control.form-control-sm(type='text'
-                  aria-describedby='email' v-model='email' placeholder='EMAIL')
                 label.col-form-label-sm.font-weight-bold(for='alamat') Alamat Perusahaan
                 textarea#alamat.form-control.form-control-sm(type='text'
                   aria-describedby='address' v-model='address' placeholder='Alamat Perusahaan')
@@ -86,18 +87,15 @@
                 label.col-form-label-sm.font-weight-bold(for='npwp') NPWP
                 input#npwp.form-control.form-control-sm(type='text'
                   aria-describedby='npwp' v-model='npwp' placeholder='NPWP')
-                label.col-form-label-sm.font-weight-bold(for='email') EMAIL
-                input#email.form-control.form-control-sm(type='text'
-                  aria-describedby='email' v-model='email' placeholder='EMAIL')
                 label.col-form-label-sm.font-weight-bold(for='alamat') Alamat Perusahaan
                 textarea#alamat.form-control.form-control-sm(type='text'
                   aria-describedby='address' v-model='address' placeholder='Alamat Perusahaan')
-              fieldset(v-show='\
-              ( role === "ADMIN" || role === "SUPERINTENDENT" || role === "EVALUATOR" )\
-              ')
-                label.col-form-label-sm.font-weight-bold(for='email') EMAIL
-                input#email.form-control.form-control-sm(type='text'
-                  aria-describedby='email' v-model='email' placeholder='EMAIL')
+            vue-recaptcha(
+              ref='recaptcha'
+              sitekey='6LdQJdUUAAAAAF9qTawLsQYbElLyWldo_wTGUdHL'
+              size='invisible'
+              @verify='onVerified'
+              :loadRecaptchaScript="true")
             button.btn-block.btn.btn-primary.btn-sm(type='submit'
               :disabled="submitStatus === 'PENDING'") BUAT PENGGUNA
             p.typo.success.pt-2(v-if="submitStatus === 'OK'") Sukses masuk.
@@ -112,8 +110,10 @@ import {
   numeric,
   alphaNum,
   sameAs,
+  email,
 } from 'vuelidate/lib/validators';
 import gql from 'graphql-tag';
+import VueRecaptcha from 'vue-recaptcha';
 
 export default {
   data() {
@@ -159,6 +159,10 @@ export default {
       minLength: minLength(8),
       numeric,
     },
+    email: {
+      required,
+      email,
+    },
   },
   methods: {
     fill_data() {
@@ -167,22 +171,18 @@ export default {
         this.company_permission = response.data.perusahaan.perizinan[0].jenis_izin;
         this.company_name = response.data.perusahaan.nama_perusahaan;
         this.npwp = response.data.perusahaan.npwp;
-        this.email = response.data.perusahaan.email;
         this.commodity = response.data.perusahaan.perizinan[0].komoditas;
         this.company_type = response.data.perusahaan.tipe_perusahaan;
-
-        console.log(response.data.perusahaan);
       });
     },
     async submit() {
       console.log('submit!');
-      if (this.role !== 'MINER' || this.role !== 'VENDOR') {
+      if (this.role === 'ADMIN' || this.role === 'SUPERINTENDENT' || this.role === 'EVALUATOR') {
         this.company_type = 'NOT_AVAILABLE';
       }
       if (this.role !== 'MINER') {
         this.commodity = 'NOT_AVAILABLE';
       }
-
       if (this.role === 'VENDOR') {
         this.company_permission = 'VENDOR';
       } else if (this.role === 'ADMIN' || this.role === 'SUPERINTENDENT' || this.role === 'EVALUATOR') {
@@ -193,68 +193,75 @@ export default {
         this.submitStatus = 'ERROR';
       } else {
         this.submitStatus = 'PENDING';
-        console.log('submitting');
-        // await this.$recaptchaLoaded();
-        // do your submit logic here
-        this.$apollo.mutate({
-          mutation: gql`mutation(
-            $username: String!,
-            $password: String!,
-            $role: String!,
-            $commodity: Commodity = NOT_AVAILABLE,
-            $phone: String,
-            $company_type: CompanyType = NOT_AVAILABLE,
-            $company_name: String,
-            $company_permission: CompanyPermission = MINERBA,
-            $npwp: String,
-            $address: String,
-            $wiup: String,
-            $email: String,
-            ){
-            signup(
-              username: $username,
-              password: $password,
-              role: $role,
-              commodity: $commodity,
-              phone: $phone,
-              company_type: $company_type,
-              company_name: $company_name,
-              company_permission: $company_permission,
-              npwp: $npwp,
-              address: $address,
-              wiup: $wiup,
-              email: $email,
-            ){
-              user{
-                username
-              }
-            }
-          }`,
-          variables: {
-            username: this.username,
-            password: this.password,
-            role: this.role,
-            commodity: this.commodity,
-            phone: this.phone,
-            company_type: this.company_type,
-            company_name: this.company_name,
-            company_permission: this.company_permission,
-            npwp: this.npwp,
-            address: this.address,
-            wiup: this.wiup,
-            email: this.email,
-          },
-        }).then(() => {
-        // Result
-          this.submitStatus = 'OK';
-          this.$router.push(`/admin/${localStorage.getItem('ares')}/profile`);
-        }).catch((error) => {
-          // Error
-          console.error(error);
-          this.submitStatus = 'ERROR';
-        });
+        this.$refs.recaptcha.execute();
       }
     },
+    onVerified(recaptchaToken) {
+      console.log('submitting');
+      this.$apollo.mutate({
+        mutation: gql`mutation(
+          $username: String!,
+          $password: String!,
+          $role: String!,
+          $commodity: Commodity = NOT_AVAILABLE,
+          $phone: String,
+          $company_type: CompanyType = NOT_AVAILABLE,
+          $company_name: String,
+          $company_permission: CompanyPermission = MINERBA,
+          $npwp: String,
+          $address: String,
+          $wiup: String,
+          $email: String,
+          $recaptchaToken: String!
+          ){
+          signup(
+            username: $username,
+            password: $password,
+            role: $role,
+            commodity: $commodity,
+            phone: $phone,
+            company_type: $company_type,
+            company_name: $company_name,
+            company_permission: $company_permission,
+            npwp: $npwp,
+            address: $address,
+            wiup: $wiup,
+            email: $email,
+            recaptchaToken: $recaptchaToken
+          ){
+            user{
+              username
+            }
+          }
+        }`,
+        variables: {
+          username: this.username,
+          password: this.password,
+          role: this.role,
+          commodity: this.commodity,
+          phone: this.phone,
+          company_type: this.company_type,
+          company_name: this.company_name,
+          company_permission: this.company_permission,
+          npwp: this.npwp,
+          address: this.address,
+          wiup: this.wiup,
+          email: this.email,
+          recaptchaToken,
+        },
+      }).then(() => {
+        // Result
+        this.submitStatus = 'OK';
+        this.$router.push(`/admin/${this.$cookies.get('apollo')}/profile`);
+      }).catch((error) => {
+        // Error
+        console.error(error);
+        this.submitStatus = 'ERROR';
+      });
+    },
+  },
+  components: {
+    'vue-recaptcha': VueRecaptcha,
   },
 };
 </script>

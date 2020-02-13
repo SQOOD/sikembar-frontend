@@ -20,13 +20,12 @@ export default {
     };
   },
   mounted() {
-    this.role = localStorage.getItem('hermes');
+    this.role = this.$cookies.get('hermes');
   },
   methods: {
     logout() {
       onLogout(this.$apollo.provider.defaultClient);
       this.$router.push('/admin-login');
-      this.$router.go(this.$router.currentRoute);
     },
   },
 };

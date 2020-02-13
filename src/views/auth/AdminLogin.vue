@@ -30,14 +30,13 @@
                 | Minimum {{$v.password.$params.minLength.min}} karakter,
                 | dan kombinasi antara angka dan huruf.
             vue-recaptcha(
-              sitekey="6LdQJdUUAAAAAF9qTawLsQYbElLyWldo_wTGUdHL"
-              size="invisible"
-              ref="recaptcha"
-              @verify="onVerify"
-              @expired="onExpired"
+              ref='recaptcha'
+              sitekey='6LdQJdUUAAAAAF9qTawLsQYbElLyWldo_wTGUdHL'
+              size='invisible'
+              @verify='onVerified'
               :loadRecaptchaScript="true")
-              button.btn-block.btn.btn-primary.btn-sm(
-                :disabled="submitStatus === 'PENDING'") Kirim
+            button.btn-block.btn.btn-primary.btn-sm(
+              :disabled="submitStatus === 'PENDING'") Kirim
             p.typo.success.pt-2(v-if="submitStatus === 'OK'") Sukses masuk.
             p.typo.error.pt-2(v-if="submitStatus === 'ERROR'") Mohon isi formulir dengan tepat.
             p.typo.error.pt-2(v-if="submitStatus === 'FAIL'") Akun Pengguna atau Kata Sandi salah.
@@ -82,52 +81,54 @@ export default {
       if (this.$v.$invalid) {
         this.submitStatus = 'ERROR';
       } else {
+        this.$refs.recaptcha.execute();
         this.submitStatus = 'PENDING';
-        console.log('submitting');
-        // await this.$recaptchaLoaded();
-        // do your submit logic here
-        this.$apollo.mutate({
-          mutation: gql`mutation($username: String!, $password: String!){
-            login(username:$username, password:$password){
-              user{
-                username
-                role
-              }
-              accessToken
-            }
-          }`,
-          variables: {
-            username: this.username,
-            password: this.password,
-          },
-        }).then((data) => {
-        // Result
-          onLogin(this.$apollo.provider.defaultClient,
-            data.data.login.accessToken,
-            data.data.login.user.role,
-            data.data.login.user.username);
-          const x = data.data.login.user;
-          let routerRole = '';
-          if (
-            x.role === 'ADMIN'
-            || x.role === 'EVALUATOR'
-            || x.role === 'SUPERINTENDENT'
-          ) {
-            routerRole = 'admin';
-          } else if (
-            x.role === 'VENDOR'
-          ) {
-            routerRole = 'vendor';
-          } else {
-            routerRole = 'miner';
-          }
-          this.$router.push(`/${routerRole}/${x.username}`);
-        }).catch((error) => {
-          // Error
-          console.error(error);
-          this.submitStatus = 'FAIL';
-        });
       }
+    },
+    onVerified(recaptchaToken) {
+      this.$apollo.mutate({
+        mutation: gql`mutation($username: String!, $password: String!, $recaptchaToken: String!){
+          login(username:$username, password:$password, recaptchaToken:$recaptchaToken){
+            user{
+              username
+              role
+            }
+            accessToken
+            result
+          }
+        }`,
+        variables: {
+          username: this.username,
+          password: this.password,
+          recaptchaToken,
+        },
+      }).then((data) => {
+        onLogin(this.$apollo.provider.defaultClient,
+          data.data.login.accessToken,
+          data.data.login.user.role,
+          data.data.login.user.username);
+        this.submitStatus = 'OK';
+        const x = data.data.login.user;
+        let routerRole = '';
+        if (
+          x.role === 'ADMIN'
+          || x.role === 'EVALUATOR'
+          || x.role === 'SUPERINTENDENT'
+        ) {
+          routerRole = 'admin';
+        } else if (
+          x.role === 'VENDOR'
+        ) {
+          routerRole = 'vendor';
+        } else {
+          routerRole = 'miner';
+        }
+        this.$router.push(`/${routerRole}/${x.username}`);
+      }).catch((error) => {
+        // Error
+        console.error(error);
+        this.submitStatus = 'FAIL';
+      });
     },
   },
 };

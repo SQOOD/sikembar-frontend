@@ -1,14 +1,14 @@
 <template lang='pug'>
   .container
     .row.mt-3
-      .col-md-5
+      .col-md-4
         profile-detail( v-if='user'
           :companyName= 'user.username',
           :permission= 'user.company_permission',
           :email= 'user.email',
         )
         span( v-else ) Loading ...
-      .col-md-7
+      .col-md-8
         section(v-if='reportFinances')
           h4.font-weight-bold.text-center Daftar Laporan Keuangan
           vue-good-table(:columns='columns' :rows='reportFinances').mb-3
@@ -86,7 +86,7 @@ export default {
   },
   data() {
     return {
-      username: this.$route.params.username,
+      username: this.$cookies.get('apollo'),
       columns: [
         {
           label: 'ID Laporan',
@@ -99,7 +99,7 @@ export default {
           tdClass: 'text-center font-weight-bold',
         },
         {
-          label: 'Tanggal Unggah',
+          label: 'Waktu Unggah',
           field: 'createdAt',
           type: 'date',
           dateInputFormat: 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'',
@@ -109,6 +109,7 @@ export default {
         {
           label: 'Aksi',
           field: 'id',
+          width: '50px',
         },
       ],
     };

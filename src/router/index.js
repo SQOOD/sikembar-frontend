@@ -34,10 +34,11 @@ const routes = [
     },
   },
   {
-    path: '/about',
-    name: 'about',
-    component: () => import('@/views/About.vue'),
+    path: '/terms',
+    name: 'terms',
+    component: () => import('@/views/Terms.vue'),
     meta: {
+      auth: false,
       breadcrumb:
         { label: 'About' },
     },
@@ -245,16 +246,27 @@ const routes = [
     ],
   },
   {
-    path: '/list',
-    name: 'list',
-    component: () => import('@/views/user/miner/Profile.vue'),
-    props: true,
-    meta: {
-      breadcrumb: {
-        label: 'List',
-        parent: 'Profil',
-      },
+    path: '/vendor/:username',
+    name: 'vendor',
+    redirect: '/vendor/:username/profile',
+    components: {
+      menu: () => import('@/components/navigations/state/Miner.vue'),
+      default: () => import('@/views/pages/Profile.vue'),
     },
+    children: [
+      {
+        path: 'profile',
+        name: 'vendor-profile',
+        components: {
+          default: () => import('@/views/user/vendor/Profile.vue'),
+        },
+        props: true,
+        meta: {
+          breadcrumb:
+            { label: 'Profil' },
+        },
+      },
+    ],
   },
 ];
 
@@ -265,7 +277,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.auth === false || localStorage.getItem('apollo') != null) {
+  if (to.meta.auth === false || Vue.$cookies.isKey('ares')) {
     next();
   } else {
     router.push('/login');

@@ -13,43 +13,52 @@
           :commodity= 'user.commodity',
         )
       .col-md-7
-        ExcelAlert
-        vue-dropzone( ref="myVueDropzone" id="dropzone"
-        :options="dropzoneOptions" :useCustomSlot='true' @vdropzone-file-added='checkUploadType'
-        :duplicateCheck='true' )
-          img(src='@/assets/img/excel.svg')
-          h5.font-weight-bold Jatuhkan Berkas Formulir SIKEMBAR disini
-            br
-            small atau klik disini untuk mencari berkas dalam komputer anda.
+        excel-alert
+        file-pond(
+          @addfile='uploadXLSX'
+          allowMultiple='true'
+          dropOnPage='true'
+          dropOnElement='false'
+          maxFileSize='1MB'
+          acceptedFileTypes='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, \
+            application/vnd.ms-excel.sheet.macroEnabled.12'
+          labelIdle=`<img src='/img/excel.65bddd47.svg'><h5 class="font-weight-bold">Jatuhkan \
+          Berkas Formulir SIKEMBAR dihalaman ini<br/><small>atau klik disini untuk mencari \
+          berkas dalam komputer anda.</small>`)
+        .filewrapper.py-2.px-3.mx-3(v-if='fileStatus' :class='fileStatusClass') {{ fileStatus }}
 </template>
 
 <script>
-import vue2Dropzone from 'vue2-dropzone';
+import vueFilePond from 'vue-filepond';
+import FilePondPluginValidateSize from 'filepond-plugin-file-validate-size';
+import FilePondFilePoster from 'filepond-plugin-file-poster';
+import FilePondPluginValidateType from 'filepond-plugin-file-validate-type';
+
+import transform from 'json-map-transform';
 import gql from 'graphql-tag';
 import cd from 'clean-deep';
-import transform from 'json-map-transform';
 import xlsxParser from '@/lib/xlsx-parser-json';
+
+import template from '@/lib/json-map/ReportFinance';
+import template3 from '@/lib/json-map/ReportGood';
 
 import ProfileDetail from '@/components/widgets/profile/Detail.vue';
 import Charts from '@/components/charts/RandomCharts.vue';
 import ExcelAlert from '@/components/alerts/ExcelFile.vue';
-import template from '@/lib/json-map/ReportFinance';
-import template3 from '@/lib/json-map/ReportGood';
 
-import 'vue2-dropzone/dist/vue2Dropzone.min.css';
+import 'filepond/dist/filepond.min.css';
+import 'filepond-plugin-file-poster/dist/filepond-plugin-file-poster.css';
 
 export default {
   data() {
     return {
+      server: {
+        process: null,
+      },
       data: '',
       user: '',
-      dropzoneOptions: {
-        url: 'https://httpbin.org/post',
-        thumbnailWidth: 150,
-        maxFilesize: 1,
-        headers: { 'My-Awesome-Header': 'header value' },
-        acceptedFiles: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel.sheet.macroEnabled.12',
-      },
+      fileStatus: '',
+      fileStatusClass: '',
     };
   },
   apollo: {
@@ -70,24 +79,28 @@ export default {
       }`,
       variables() {
         return {
-          username: this.$route.params.username,
+          username: this.$cookies.get('apollo'),
         };
       },
     },
   },
   components: {
     ProfileDetail,
-    vueDropzone: vue2Dropzone,
     Charts,
     ExcelAlert,
+    FilePond: vueFilePond(
+      FilePondPluginValidateSize,
+      FilePondPluginValidateType,
+      FilePondFilePoster,
+    ),
   },
   methods: {
-    checkUploadType(file) {
-      if (
-        file.type.match('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        && file.name.match(/form *be*.*.xlsx?/gi)) {
+    uploadXLSX(error, file) {
+      if (file.filename.match(/form *be*.*.xlsx?/gi)) {
+        this.fileStatus = 'Berkas diproses.';
+        this.fileStatusClass = 'processing';
         xlsxParser
-          .onFileSelection(file, { showNullProperties: true, hideEmptyRows: true })
+          .onFileSelection(file.file, { showNullProperties: true, hideEmptyRows: true })
           .then((data) => {
             const A = data.A.map(o => Object.assign(o, { Kategori: 'A' }));
             const B = data.B.map(o => Object.assign(o, { Kategori: 'B' }));
@@ -143,13 +156,18 @@ export default {
                   data: z,
                 },
               });
+              this.fileStatus = 'Berkas selesai diproses.';
+              this.fileStatusClass = 'done';
             });
           });
-      } else if (file.type.match('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-      && file.name.match(/form *lap*.*.xlsx?/gi)) {
+      } else if (file.filename.match(/form *lap*.*.xlsx?/gi)) {
+        this.fileStatus = 'Berkas diproses.';
+        this.fileStatusClass = 'processing';
         xlsxParser
-          .onFileSelection(file, { showNullProperties: true, hideEmptyRows: true })
+          .onFileSelection(file.file, { showNullProperties: true, hideEmptyRows: true })
           .then((data) => {
+            this.fileStatus = 'Berkas diproses.';
+            this.fileStatusClass = 'processing';
             const str = JSON.stringify(data)
               .replace(/Rp/g, '')
               .replace(/,0/g, '0')
@@ -179,6 +197,8 @@ export default {
                   data: z,
                 },
               });
+              this.fileStatus = 'Berkas selesai diproses.';
+              this.fileStatusClass = 'done';
             });
           });
       }
@@ -188,14 +208,45 @@ export default {
 </script>
 
 <style scoped>
-img{
+/deep/ .filepond--root img{
   width: 4.5rem;
 }
 
-.vue-dropzone{
+/deep/ .filepond--root .filepond--drop-label{
+  min-height:10rem
+}
+
+.filepond--wrapper{
   border:2px dashed #b7b7b7;
-  background-color:rgba(255,255,255,0.6);
-  margin-top:3px;
   color:#6d8671;
+}
+
+.filepond--drop-label{
+  min-height: 15rem;
+}
+
+.filewrapper{
+  border-radius: 0.5rem;
+  min-height: 2rem;
+  font-size:0.8rem;
+  color:#ffffff;
+  margin-top:0.7rem;
+}
+
+.processing{
+  background-color:rgb(184, 184, 43);
+}
+
+.done{
+  background-color:rgb(23, 105, 23);
+  -webkit-transition: opacity 3s ease-in-out;
+  -moz-transition: opacity 3s ease-in-out;
+  -ms-transition: opacity 3s ease-in-out;
+  -o-transition: opacity 3s ease-in-out;
+  opacity: 0;
+}
+
+.failed{
+  background-color:rgb(192, 24, 24);
 }
 </style>

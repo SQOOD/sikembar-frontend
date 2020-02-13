@@ -3,12 +3,49 @@
 #report.container.mt-4
   section(v-if='reportGood')
     section.d-flex.flex-row.pb-2.mb-2
-      h1
-        | Detail laporan
-        span.badge.badge-secondary.ml-2 {{ reportGood.id }}
-        span.badge.badge-secondary.ml-2 {{ reportGood.year }}
-        span.badge.badge-secondary.ml-2 {{ reportGood.report_type }}
-      button.ml-auto.btn.btn-sm.btn-info(type='button' @click='approve') Setujui Laporan
+      .card
+        .card-body
+          h1
+            | Detail laporan
+            span.badge.badge-secondary.ml-2 {{ reportGood.id }}
+            span.badge.badge-secondary.ml-2 {{ reportGood.year }}
+            span.badge.badge-secondary.ml-2 {{ reportGood.report_type }}
+      .ml-auto
+        vac(
+            @finish='approve'
+            :end-time="new Date().getTime() + 8000"
+            :auto-start="false"
+            ref="vac"
+            )
+            template(v-slot:before)
+              .card
+                .card-body
+                  button.btn.btn-sm.btn-info(
+                    type='button'
+                    @click='submitApproval'
+                    ) Setujui Laporan
+                  button.btn.btn-sm.btn-danger.ml-3(
+                    type='button'
+                    @click='reject'
+                    ) Tolak Laporan
+            template(v-slot:process='{ timeObj, state }')
+              .card
+                .card-body
+                  small Diproses dalam {{ timeObj.ceil.s }} detik.
+                  button.btn.btn-sm.ml-3.btn-warning(v-if='state === "process"'
+                    @click='holdApproval'
+                    ) Tahan
+                  button.btn.btn-sm.ml-3.btn-success(v-else
+                    @click='submitApproval'
+                    ) Lanjutkan
+                  button.btn.btn-sm.btn-danger.ml-3(
+                    type='button'
+                    @click='reject'
+                    ) Tolak Laporan
+            template(v-slot:finish)
+              .card.text-white.bg-success
+                .card-body
+                  | Laporan telah disetujui.
     h2 Belanja Barang
     vue-good-table(:columns='procurement' :rows='reportGood.procurement').mb-3
   span(v-else) Loading ...
@@ -20,7 +57,7 @@ import gql from 'graphql-tag';
 export default {
   apollo: {
     reportGood: {
-      query: gql` query reportGood($id: ID!){
+      query: gql` query reportGood($id: String!){
         reportGood( where:{id: $id} ){
           id
           year
@@ -124,10 +161,29 @@ export default {
     },
     approve() {
       this.$apollo.mutate({
-        mutation: gql`mutation updateOneReportGood($id: ID!){
+        mutation: gql`mutation updateOneReportGood($id: String!){
           updateOneReportGood(where:{id: $id}, data:{approved: true}){
             approved
           },
+        }`,
+        variables: {
+          id: this.$route.params.reportID,
+        },
+      });
+      this.$router.push({ name: 'admin-profile' });
+    },
+    submitApproval() {
+      this.$refs.vac.startCountdown();
+    },
+    holdApproval() {
+      this.$refs.vac.pauseCountdown();
+    },
+    reject() {
+      this.$refs.vac.stopCountdown();
+
+      this.$apollo.mutate({
+        mutation: gql`mutation updateOneReportGood($id: ID!){
+          deleteOneReportFinance(where:{id: $id}),
         }`,
         variables: {
           id: this.$route.params.reportID,
@@ -140,6 +196,10 @@ export default {
 </script>
 
 <style scoped>
+  .card-body{
+    padding: 0.3rem 1.25rem;
+  }
+
   section{
     border-bottom: 2px solid #525252;
   }

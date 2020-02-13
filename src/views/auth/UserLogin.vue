@@ -25,12 +25,13 @@
                 | Minimum {{$v.password.$params.minLength.min}} karakter,
                 | dan kombinasi antara angka dan huruf.
             p#disclaimer.mb-3 *) Dengan menekan tombol "Kirim", anda telah menyetujui
-              router-link(to='/about')  ketentuan yang berlaku
+              router-link(to='/terms')  ketentuan yang berlaku
               | .
             vue-recaptcha(
-              ref="recaptcha"
-              sitekey="6LdQJdUUAAAAAF9qTawLsQYbElLyWldo_wTGUdHL"
-              size="invisible"
+              ref='recaptcha'
+              sitekey='6LdQJdUUAAAAAF9qTawLsQYbElLyWldo_wTGUdHL'
+              size='invisible'
+              @verify='onVerified'
               :loadRecaptchaScript="true")
             button.btn-block.btn.btn-primary.btn-sm(type='submit'
               :disabled="submitStatus === 'PENDING'") Kirim
@@ -74,55 +75,58 @@ export default {
   methods: {
     async submit() {
       console.log('submit!');
-      this.$refs.recaptcha.execute();
       this.$v.$touch();
       if (this.$v.$invalid) {
         this.submitStatus = 'ERROR';
       } else {
+        this.$refs.recaptcha.execute();
         this.submitStatus = 'PENDING';
-        console.log('submitting');
-        this.$apollo.mutate({
-          mutation: gql`mutation($username: String!, $password: String!){
-            login(username:$username, password:$password){
-              user{
-                username
-                role
-              }
-              accessToken
-            }
-          }`,
-          variables: {
-            username: this.username,
-            password: this.password,
-          },
-        }).then((data) => {
-          onLogin(this.$apollo.provider.defaultClient,
-            data.data.login.accessToken,
-            data.data.login.user.role,
-            data.data.login.user.username);
-          this.submitStatus = 'OK';
-          const x = data.data.login.user;
-          let routerRole = '';
-          if (
-            x.role === 'ADMIN'
-            || x.role === 'EVALUATOR'
-            || x.role === 'SUPERINTENDENT'
-          ) {
-            routerRole = 'admin';
-          } else if (
-            x.role === 'VENDOR'
-          ) {
-            routerRole = 'vendor';
-          } else {
-            routerRole = 'miner';
-          }
-          this.$router.push(`/${routerRole}/${x.username}`);
-        }).catch((error) => {
-          // Error
-          console.error(error);
-          this.submitStatus = 'FAIL';
-        });
       }
+    },
+    onVerified(recaptchaToken) {
+      this.$apollo.mutate({
+        mutation: gql`mutation($username: String!, $password: String!, $recaptchaToken: String!){
+          login(username:$username, password:$password, recaptchaToken:$recaptchaToken){
+            user{
+              username
+              role
+            }
+            accessToken
+            result
+          }
+        }`,
+        variables: {
+          username: this.username,
+          password: this.password,
+          recaptchaToken,
+        },
+      }).then((data) => {
+        onLogin(this.$apollo.provider.defaultClient,
+          data.data.login.accessToken,
+          data.data.login.user.role,
+          data.data.login.user.username);
+        this.submitStatus = 'OK';
+        const x = data.data.login.user;
+        let routerRole = '';
+        if (
+          x.role === 'ADMIN'
+          || x.role === 'EVALUATOR'
+          || x.role === 'SUPERINTENDENT'
+        ) {
+          routerRole = 'admin';
+        } else if (
+          x.role === 'VENDOR'
+        ) {
+          routerRole = 'vendor';
+        } else {
+          routerRole = 'miner';
+        }
+        this.$router.push(`/${routerRole}/${x.username}`);
+      }).catch((error) => {
+        // Error
+        console.error(error);
+        this.submitStatus = 'FAIL';
+      });
     },
   },
 };

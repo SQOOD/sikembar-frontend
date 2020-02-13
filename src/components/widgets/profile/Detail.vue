@@ -3,9 +3,9 @@ div
   .card.shadowbox
     .card-body
       .row.no-gutters
-        .col-sm-4
+        .col-sm-5
           img.img-thumbnail.rounded-circle(src='@/assets/img/default-profile.png')
-        .col-sm-8.align-self-center
+        .col-sm-7.align-self-center
           h1.mb-1(v-if='companyType!=""') {{companyType}}. {{companyName}}
           h1.mb-1(v-else) {{companyName}}
           router-link(to='#').badge-primary.badge {{permission}}

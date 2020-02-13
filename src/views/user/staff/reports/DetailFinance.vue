@@ -2,22 +2,74 @@
 #report.container.mt-4
   section(v-if='reportFinance')
     section.d-flex.flex-row.pb-2.mb-2
-      h1
-        | Detail laporan
-        span.badge.badge-secondary.ml-2 {{ reportFinance.id }}
-        span.badge.badge-secondary.ml-2 {{ reportFinance.year }}
-      button.ml-auto.btn.btn-sm.btn-info(type='button' @click='approve') Setujui Laporan
-    h2 Asumsi Keuangan
-    h3 [ BBM Sebesar {{ reportFinance.fuel[0].price }} {{ reportFinance.fuel[0].currency }}]
-    vue-good-table(:columns='assumption' :rows='reportFinance.assumption').mb-3
-    h2 Neraca Keuangan
-    vue-good-table(:columns='balance' :rows='reportFinance.balance').mb-3
-    h2 Anggaran Belanja
-    vue-good-table(:columns='budgets' :rows='reportFinance.budgets').mb-3
-    h3 Belanja Modal
-    vue-good-table(:columns='capital_budget' :rows='reportFinance.capital_budget').mb-3
-    h3 Arus Keuangan
-    vue-good-table(:columns='cashflow' :rows='reportFinance.cashflow').mb-3
+      .card
+        .card-body
+          h1
+            | Detail Laporan Keuangan
+            span.badge.badge-secondary.ml-2 {{ reportFinance.id }}
+            span.badge.badge-secondary.ml-2 {{ reportFinance.year }}
+      .ml-auto
+        vac(
+          @finish='approve'
+          :end-time="new Date().getTime() + 8000"
+          :auto-start="false"
+          ref="vac"
+          )
+          template(v-slot:before)
+            .card
+              .card-body
+                button.btn.btn-sm.btn-info(
+                  type='button'
+                  @click='submitApproval'
+                  ) Setujui Laporan
+                button.btn.btn-sm.btn-danger.ml-3(
+                  type='button'
+                  @click='reject'
+                  ) Tolak Laporan
+          template(v-slot:process='{ timeObj, state }')
+            .card
+              .card-body
+                small Diproses dalam {{ timeObj.ceil.s }} detik.
+                button.btn.btn-sm.ml-3.btn-warning(v-if='state === "process"'
+                  @click='holdApproval'
+                  ) Tahan
+                button.btn.btn-sm.ml-3.btn-success(v-else
+                  @click='submitApproval'
+                  ) Lanjutkan
+                button.btn.btn-sm.btn-danger.ml-3(
+                  type='button'
+                  @click='reject'
+                  ) Tolak Laporan
+          template(v-slot:finish)
+            .card.text-white.bg-success
+              .card-body
+                | Laporan telah disetujui.
+    vue-tabs
+      v-tab(title='Asumsi Keuangan')
+        h3 [ BBM Sebesar {{ reportFinance.fuel[0].price }} {{ reportFinance.fuel[0].currency }}]
+        vue-good-table(:columns='assumption' :rows='reportFinance.assumption').mb-3
+      v-tab(title='Neraca Keuangan')
+        vue-good-table(:columns='balance' :rows='reportFinance.balance').mb-3
+      v-tab(title='Anggaran Belanja')
+        vue-good-table(:columns='budgets' :rows='reportFinance.budgets').mb-3
+        vue-good-table(:columns='capital_budget' :rows='reportFinance.capital_budget').mb-3
+      v-tab(title='Arus Keuangan')
+        vue-good-table(:columns='cashflow' :rows='reportFinance.cashflow').mb-3
+      v-tab(title='Harga Pokok Penjualan')
+        vue-good-table(:columns='operation_cost' :rows='reportFinance.operation_cost').mb-3
+        vue-good-table(:columns='royalty' :rows='reportFinance.royalty').mb-3
+        vue-good-table(:columns='cost_of_good' :rows='reportFinance.cost_of_good').mb-3
+      v-tab(title='Investasi')
+        vue-good-table(:columns='investment' :rows='reportFinance.investment').mb-3
+      v-tab(title='Laba Rugi')
+        vue-good-table(:columns='lost_profit' :rows='reportFinance.lost_profit').mb-3
+        vue-good-table(:columns='operation_cost' :rows='reportFinance.operation_cost').mb-3
+      v-tab(title='Keuangan Lainnya')
+        vue-good-table(:columns='other_finance' :rows='reportFinance.other_finance').mb-3
+      v-tab(title='Penerimaan Negara')
+        vue-good-table(:columns='state_revenue' :rows='reportFinance.state_revenue').mb-3
+      v-tab(title='Sumber Pembiayaan')
+        vue-good-table(:columns='source_of_funding' :rows='reportFinance.source_of_funding').mb-3
   span( v-else ) Loading ...
 </template>
 
@@ -27,7 +79,7 @@ import gql from 'graphql-tag';
 export default {
   apollo: {
     reportFinance: {
-      query: gql` query reportFinance($id: ID!){
+      query: gql` query reportFinance($id: String!){
         reportFinance( where:{id: $id} ){
           id
           year
@@ -187,6 +239,102 @@ export default {
           tdClass: 'text-center font-weight-bold',
         },
       ],
+      cost_of_good: [
+        {
+          label: 'Uraian',
+          field: 'detail',
+        },
+        {
+          label: 'Nilai',
+          field: this.balanceValue,
+          tdClass: 'text-center font-weight-bold',
+        },
+      ],
+      investment: [
+        {
+          label: 'Uraian',
+          field: 'detail',
+        },
+        {
+          label: 'Nilai',
+          field: this.balanceValue,
+          tdClass: 'text-center font-weight-bold',
+        },
+      ],
+      lost_profit: [
+        {
+          label: 'Kategori',
+          field: 'category',
+        },
+        {
+          label: 'Uraian',
+          field: 'detail',
+        },
+        {
+          label: 'Nilai',
+          field: this.balanceValue,
+          tdClass: 'text-center font-weight-bold',
+        },
+      ],
+      other_finance: [
+        {
+          label: 'Uraian',
+          field: 'detail',
+        },
+        {
+          label: 'Nilai',
+          field: this.balanceValue,
+          tdClass: 'text-center font-weight-bold',
+        },
+      ],
+      operation_cost: [
+        {
+          label: 'Uraian',
+          field: 'detail',
+        },
+        {
+          label: 'Nilai',
+          field: this.balanceValue,
+          tdClass: 'text-center font-weight-bold',
+        },
+      ],
+      royalty: [
+        {
+          label: 'Uraian',
+          field: 'detail',
+        },
+        {
+          label: 'Nilai',
+          field: this.balanceValue,
+          tdClass: 'text-center font-weight-bold',
+        },
+      ],
+      state_revenue: [
+        {
+          label: 'Kategori',
+          field: 'category',
+        },
+        {
+          label: 'Uraian',
+          field: 'detail',
+        },
+        {
+          label: 'Nilai',
+          field: this.balanceValue,
+          tdClass: 'text-center font-weight-bold',
+        },
+      ],
+      source_of_funding: [
+        {
+          label: 'Uraian',
+          field: 'detail',
+        },
+        {
+          label: 'Nilai',
+          field: this.balanceValue,
+          tdClass: 'text-center font-weight-bold',
+        },
+      ],
     };
   },
   created() {
@@ -213,12 +361,33 @@ export default {
     balanceValue(x) {
       return `${x.value}`;
     },
+    submitApproval() {
+      this.$refs.vac.startCountdown();
+    },
+    holdApproval() {
+      this.$refs.vac.pauseCountdown();
+    },
     approve() {
       this.$apollo.mutate({
-        mutation: gql`mutation updateOneReportFinance($id: ID!){
+        mutation: gql`mutation updateOneReportFinance($id: String!){
           updateOneReportFinance(where:{id: $id}, data:{approved: true}){
             approved
           },
+        }`,
+        variables: {
+          id: this.$route.params.reportID,
+        },
+      });
+      setTimeout(
+        () => { this.$router.push({ name: 'admin-profile' }); }, 3000,
+      );
+    },
+    reject() {
+      this.$refs.vac.stopCountdown();
+
+      this.$apollo.mutate({
+        mutation: gql`mutation updateOneReportFinance($id: ID!){
+          deleteOneReportFinance(where:{id: $id}),
         }`,
         variables: {
           id: this.$route.params.reportID,
@@ -231,14 +400,16 @@ export default {
 </script>
 
 <style scoped>
-  section{
-    border-bottom: 2px solid #525252;
+  .card-body{
+    padding: 0.3rem 1.25rem;
   }
 
   h1{
     color:#808080;
     font-size:1.3rem;
     font-weight:600;
+    margin-top:0.1rem;
+    margin-bottom:0;
   }
 
   h2{
@@ -246,10 +417,19 @@ export default {
     font-size:1.1rem;
     font-weight:600;
   }
+
   h3{
     color:#535353;
     font-size:0.9rem;
     font-weight:600;
+  }
+
+  /deep/ .vue-tabs .nav > li > a  {
+    padding: 10px 13px;
+  }
+
+  /deep/ .vue-tabs .nav{
+    font-size:0.6rem;
   }
 
   /deep/ .vgt-table th{

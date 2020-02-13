@@ -7,6 +7,9 @@ import VueAxios from 'vue-axios';
 import Vue2Crumbs from 'vue-2-crumbs';
 import VueGoodTablePlugin from 'vue-good-table';
 import vSelect from 'vue-select';
+import VueTabs from 'vue-nav-tabs/dist/vue-tabs';
+import VueCookies from 'vue-cookies';
+import vueAwesomeCountdown from 'vue-awesome-countdown';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faFileAlt } from '@fortawesome/free-solid-svg-icons';
@@ -25,6 +28,7 @@ import '@/assets/css/css.css';
 import 'vuelayers/lib/style.css'; // needs css-loader
 import 'vue-good-table/dist/vue-good-table.css';
 import 'vue-select/dist/vue-select.css';
+import 'vue-nav-tabs/themes/vue-tabs.css';
 
 Vue.component('v-select', vSelect);
 Vue.use(vbclass, router);
@@ -33,6 +37,11 @@ Vue.use(Vuelidate);
 Vue.use(VueAxios, axios);
 Vue.use(Vue2Crumbs);
 Vue.use(VueGoodTablePlugin);
+Vue.use(VueTabs);
+Vue.use(VueCookies);
+Vue.use(vueAwesomeCountdown, 'vac');
+
+Vue.$cookies.config('15min');
 
 library.add(faFileAlt);
 Vue.component('font-awesome-icon', FontAwesomeIcon);

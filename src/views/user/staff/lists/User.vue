@@ -4,7 +4,6 @@
     vue-good-table(
     :columns='columns'
     :rows='users'
-    @on-cell-click='onCellClick'
     :pagination-options='{ enabled: true, perPage: 10 }'
     :search-options='{ enabled: true, placeholder: "Ketik Pencarian" }'
     )
@@ -22,6 +21,17 @@
       template(slot='table-row' slot-scope='props')
         span.font-weight-bold(v-if='props.column.field == "username"')
           | {{props.row.username}}
+        span(v-if='props.column.label == "Aksi"')
+          button.btn.btn-sm.btn-danger.mr-2(
+            @click='deleteUser(props.row.id)'
+            )
+            font-awesome-icon.mr-2(:icon='["fas", "file-alt"]')
+            | Hapus
+          button.btn.btn-sm.btn-info.mr-2(
+            @click='editUser(props.row.id)'
+            )
+            font-awesome-icon.mr-2(:icon='["fas", "file-alt"]')
+            | Ubah
 </template>
 
 <script>
@@ -33,6 +43,7 @@ export default {
     users: {
       query: gql`query User{
         users{
+          id
           username
           role
           commodity
@@ -53,10 +64,6 @@ export default {
       users: [],
       columns: [
         {
-          label: 'Aksi',
-          field: 'aksi',
-        },
-        {
           label: 'Akun Pengguna',
           field: 'username',
         },
@@ -72,7 +79,6 @@ export default {
         {
           label: 'Komoditas',
           field: 'commodity',
-          hidden: true,
         },
         {
           label: 'Tipe',
@@ -110,28 +116,36 @@ export default {
         {
           label: 'Alamat',
           field: 'address',
+          hidden: true,
+        },
+        {
+          label: 'Aksi',
+          field: 'id',
         },
       ],
     };
   },
   methods: {
-    // onCellClick(params) {
-    //   if (params.column.field === 'username') {
-    //     if (params.row.role === 'MINER') {
-    //       this.$router.push(
-    //         `/admin/${this.$route.params.userName}/view-user/miner/${params.row.username}`
-    //       );
-    //     } else if (params.row.role === 'VENDOR') {
-    //       this.$router.push(
-    //         `/admin/${this.$route.params.userName}/view-user/vendor/${params.row.username}`
-    //       );
-    //     } else {
-    //       this.$router.push(
-    //         `/admin/${this.$route.params.userName}/view-user/staff/${params.row.username}`
-    //       );
-    //     }
-    //   }
-    // },
+    editUser(x) {
+      console.log(x);
+      this.$router.push();
+    },
+
+    deleteUser(x) {
+      console.log(x);
+      this.$apollo.mutate({
+        mutation: gql`mutation($id:String!){
+          deleteOneUser(where:{id: $id}){
+            id
+          }
+        }`,
+        variables: {
+          id: x,
+        },
+      });
+      this.$router.go(this.$router.currentRoute);
+    },
+
     toggleColumn(index) {
       // Set hidden to inverse of what it currently is
       this.$set(this.columns[index], 'hidden', !this.columns[index].hidden);

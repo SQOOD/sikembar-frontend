@@ -6,9 +6,9 @@ import { createApolloClient, restartWebsockets } from 'vue-cli-plugin-apollo/gra
 Vue.use(VueApollo);
 
 // Name of the localStorage item
-const AUTH_TOKEN = 'apollo';
-const USER_ROLE = 'hermes';
-const USER_NAME = 'ares';
+const AUTH_TOKEN = 'ares';
+const ROLE_TOKEN = 'hermes';
+const NAME_TOKEN = 'apollo';
 
 // Http endpoint
 const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:4000/';
@@ -39,7 +39,7 @@ const defaultOptions = {
   // cache: myCache
 
   // Override the way the Authorization header is set
-  // getAuth: (tokenName) => ...
+  getAuth: () => Vue.$cookies.get(AUTH_TOKEN),
 
   // Additional ApolloClient options
   // apollo: { ... }
@@ -76,15 +76,10 @@ export function createProvider(options = {}) {
 
 // Manually call this when user log in
 export async function onLogin(apolloClient, token, role, name) {
-  if (typeof localStorage !== 'undefined' && token) {
-    localStorage.setItem(AUTH_TOKEN, token);
-    // hack for undisclosure staff
-    if (role === 'ADMIN' || role === 'EVALUATOR' || role === 'SUPERINTENDENT') {
-      localStorage.setItem(USER_ROLE, 'ADMIN');
-    } else {
-      localStorage.setItem(USER_ROLE, role);
-    }
-    localStorage.setItem(USER_NAME, name);
+  if (Vue.$cookies.isKey(AUTH_TOKEN) === false && token) {
+    Vue.$cookies.set(AUTH_TOKEN, token, '15min');
+    Vue.$cookies.set(ROLE_TOKEN, role, '15min');
+    Vue.$cookies.set(NAME_TOKEN, name, '15min');
   }
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
   try {
@@ -97,8 +92,8 @@ export async function onLogin(apolloClient, token, role, name) {
 
 // Manually call this when user log out
 export async function onLogout(apolloClient) {
-  if (typeof localStorage !== 'undefined') {
-    localStorage.removeItem(AUTH_TOKEN);
+  if (Vue.$cookies.isKey(AUTH_TOKEN) === true) {
+    Vue.$cookies.keys().forEach(cookie => Vue.$cookies.remove(cookie));
   }
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
   try {

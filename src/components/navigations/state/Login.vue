@@ -21,7 +21,7 @@ export default {
     };
   },
   mounted() {
-    this.role = localStorage.getItem('apollo-rule');
+    this.role = this.$cookies.get('hermes');
   },
 };
 </script>

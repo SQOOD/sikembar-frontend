@@ -1,5 +1,5 @@
 <template lang="pug">
-.alert.alert-warning.alert-dismissible.fade.show(role='alert')
+.alert.alert-warning.fade.show(role='alert')
   h6.alert-heading.font-weight-bold
     a(:href='`https://github.com/SQOOD/sikembar-form/archive/1.0.2.1.zip`')
       | Unduh berkas formulir SIKEMBAR disini.
