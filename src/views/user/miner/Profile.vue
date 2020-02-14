@@ -141,7 +141,7 @@ export default {
             this.$apollo.query({
               query: gql`query{me{username}}`,
             }).then((me) => {
-              const y = { file_path: 'none', user: { connect: { username: me.data.me.username } } };
+              const y = { user: { connect: { username: me.data.me.username } } };
               const z = { ...x, ...y };
               this.$apollo.mutate({
                 mutation: gql`
@@ -182,7 +182,7 @@ export default {
             this.$apollo.query({
               query: gql`query{me{username}}`,
             }).then((me) => {
-              const y = { file_path: 'none', user: { connect: { username: me.data.me.username } } };
+              const y = { user: { connect: { username: me.data.me.username } } };
               const z = cd({ ...x, ...y });
               this.$apollo.mutate({
                 mutation: gql`

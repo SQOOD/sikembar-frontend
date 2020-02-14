@@ -117,7 +117,7 @@ export default {
         ) {
           routerRole = 'admin';
         } else if (
-          x.role === 'VENDOR'
+          x.role === 'SUPPLIER'
         ) {
           routerRole = 'vendor';
         } else {

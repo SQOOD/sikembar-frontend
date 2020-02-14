@@ -16,7 +16,7 @@
               p.error(v-if="!$v.username.alphaNum") Gunakan format akun pengguna yang benar.
               p.error(v-if="!$v.username.minLength")
                 | Minimum {{$v.username.$params.minLength.min}} karakter.
-              label.col-form-label-sm.font-weight-bold(for='email') EMAIL
+              label.col-form-label-sm.font-weight-bold(for='email') Email
               input#email.form-control.form-control-sm(type='text'
                 aria-describedby='email' placeholder='Masukan email'
                 v-model.trim.lazy="$v.email.$model"
@@ -30,7 +30,7 @@
               :loadRecaptchaScript="true")
             button.btn-block.btn.btn-primary.btn-sm(type='submit'
               :disabled="submitStatus === 'PENDING'") KIRIM KATA SANDI BARU
-            p.typo.success.pt-2(v-if="submitStatus === 'OK'") Sukses masuk.
+            p.typo.success.pt-2(v-if="submitStatus === 'OK'") Email telah dikirimkan.
             p.typo.error.pt-2(v-if="submitStatus === 'ERROR'") Mohon isi formulir dengan tepat.
             p.typo.wait.pt-2(v-if="submitStatus === 'PENDING'") Mengirimkan data.
 </template>
@@ -91,25 +91,9 @@ export default {
           email: this.email,
           recaptchaToken,
         },
-      }).then((data) => {
+      }).then(() => {
       // Result
         this.submitStatus = 'OK';
-        console.log(data);
-        this.axios.post('http://172.16.0.49:8080/api/v1/send-mail',
-          {
-            receiver: 'tsanyqudsi@gmail.com',
-            subject: 'Ini Ibu Budi',
-            content: 'Ibu Budi juga suka masak.',
-          },
-          {
-            headers: {
-              Authorization: 'bi0fu3l!23',
-              'Content-Type': 'application/json',
-            },
-          }).then((response) => {
-          console.log('mail sent');
-          console.log(response);
-        });
       }).catch((error) => {
         // Error
         console.error(error);
@@ -121,9 +105,12 @@ export default {
 </script>
 
 <style scoped>
+.typo{
+  font-size:0.7rem;
+}
+
 .error{
   color:#dc3545;
-  font-size:0.7rem;
   line-height:1.1;
   margin-top:0.3rem;
 }

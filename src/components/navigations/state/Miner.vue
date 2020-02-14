@@ -1,7 +1,7 @@
 <template lang="pug">
 ul.navbar-nav.ml-auto
   li.nav-item
-    router-link.nav-link(:to="{ name: 'miner-profile'}") Profil Perusahaan
+    router-link.nav-link(:to="{ name: 'miner-profile'}") Dasbor
   li.nav-item
     router-link.nav-link(:to="{ name: 'miner-rekap'}") Rekap Perusahaan
   li.nav-item
@@ -15,7 +15,7 @@ export default {
   methods: {
     logout() {
       onLogout(this.$apollo.provider.defaultClient);
-      this.$router.push('/');
+      this.$router.push('/login');
     },
   },
 };

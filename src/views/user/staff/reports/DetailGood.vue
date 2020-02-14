@@ -170,7 +170,9 @@ export default {
           id: this.$route.params.reportID,
         },
       });
-      this.$router.push({ name: 'admin-profile' });
+      setTimeout(
+        () => { this.$router.push({ name: 'admin-profile' }); }, 3000,
+      );
     },
     submitApproval() {
       this.$refs.vac.startCountdown();

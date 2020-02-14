@@ -18,19 +18,6 @@
               p.error(v-if="!$v.username.alphaNum") Gunakan format akun pengguna yang benar.
               p.error(v-if="!$v.username.minLength")
                 | Minimum {{$v.username.$params.minLength.min}} karakter.
-              label.col-form-label-sm.font-weight-bold(for='sandiPengguna') Kata Sandi
-              input#sandiPengguna.form-control.form-control-sm(type='password'
-                v-model.trim.lazy="$v.password.$model"
-                placeholder='Kata Sandi' :class="{ 'is-invalid': $v.password.$error }")
-              p.error(v-if="!$v.password.minLength")
-                | Minimum {{$v.password.$params.minLength.min}} karakter,
-                | dan kombinasi antara angka dan huruf.
-              label.col-form-label-sm.font-weight-bold(for='sandiPengguna') Ulang Kata Sandi
-              input#ulangSandiPengguna.form-control.form-control-sm(type='password'
-                v-model.trim.lazy="$v.repeatPassword.$model"
-                placeholder='Ulang Kata Sandi' :class="{ 'is-invalid': $v.repeatPassword.$error }")
-              p.error(v-if="!$v.repeatPassword.sameAsPassword")
-                | Harus identik dengan Kata Sandi.
               label.col-form-label-sm.font-weight-bold(for='Telepon') Telepon
               input#Telepon.form-control.form-control-sm(type='text'
                 aria-describedby='Telepon' placeholder='Masukan telepon'
@@ -52,9 +39,9 @@
                 .input-group-append
                   button.btn-block.btn.btn-primary.btn-sm(type='button' @click='fill_data'
                   :disabled="submitStatus === 'PENDING'") Isi Data
-                  p.typo.success.pt-2(v-if="submitStatus === 'OK'") Sukses.
-                  p.typo.error.pt-2(v-if="submitStatus === 'ERROR'") Data tidak ada
-                  p.typo.wait.pt-2(v-if="submitStatus === 'PENDING'") Mengirimkan data.
+                  p.typo.success.pt-2(v-if="WIUPStatus === 'OK'") Sukses.
+                  p.typo.error.pt-2(v-if="WIUPStatus === 'ERROR'") Data tidak ada
+                  p.typo.wait.pt-2(v-if="WIUPStatus === 'PENDING'") Mengirimkan data.
               p.error(v-if="!$v.wiup.numeric") Gunakan format akun pengguna yang benar.
               p.error(v-if="!$v.wiup.minLength")
                 | Minimum {{$v.wiup.$params.minLength.min}} karakter.
@@ -76,7 +63,7 @@
                 label.col-form-label-sm.font-weight-bold(for='alamat') Alamat Perusahaan
                 textarea#alamat.form-control.form-control-sm(type='text'
                   aria-describedby='address' v-model='address' placeholder='Alamat Perusahaan')
-              fieldset(v-show='role === "VENDOR"')
+              fieldset(v-show='role === "SUPPLIER"')
                 label.col-form-label-sm.font-weight-bold(for='tipeDanNamaPerusahaan')
                   | Nama dan Tipe Perusahaan
                 .input-group#tipeDanNamaPerusahaan
@@ -109,11 +96,11 @@ import {
   minLength,
   numeric,
   alphaNum,
-  sameAs,
   email,
 } from 'vuelidate/lib/validators';
 import gql from 'graphql-tag';
 import VueRecaptcha from 'vue-recaptcha';
+import crypto from 'crypto';
 
 export default {
   data() {
@@ -133,7 +120,8 @@ export default {
       company_name: '',
       address: '',
       submitStatus: null,
-      options: ['ADMIN', 'EVALUATOR', 'SUPERINTENDENT', 'MINER', 'VENDOR'],
+      WIUPStatus: null,
+      options: ['ADMIN', 'EVALUATOR', 'SUPERINTENDENT', 'MINER', 'SUPPLIER'],
       company_options: ['CV', 'PT'],
     };
   },
@@ -142,13 +130,6 @@ export default {
       required,
       minLength: minLength(8),
       alphaNum,
-    },
-    password: {
-      required,
-      minLength: minLength(8),
-    },
-    repeatPassword: {
-      sameAsPassword: sameAs('password'),
     },
     wiup: {
       minLength: minLength(8),
@@ -183,8 +164,8 @@ export default {
       if (this.role !== 'MINER') {
         this.commodity = 'NOT_AVAILABLE';
       }
-      if (this.role === 'VENDOR') {
-        this.company_permission = 'VENDOR';
+      if (this.role === 'SUPPLIER') {
+        this.company_permission = 'SUPPLIER';
       } else if (this.role === 'ADMIN' || this.role === 'SUPERINTENDENT' || this.role === 'EVALUATOR') {
         this.company_permission = 'MINERBA';
       }
@@ -198,6 +179,8 @@ export default {
     },
     onVerified(recaptchaToken) {
       console.log('submitting');
+      const password = crypto.randomBytes(6).toString('hex');
+      console.log(password);
       this.$apollo.mutate({
         mutation: gql`mutation(
           $username: String!,
@@ -236,7 +219,7 @@ export default {
         }`,
         variables: {
           username: this.username,
-          password: this.password,
+          password,
           role: this.role,
           commodity: this.commodity,
           phone: this.phone,

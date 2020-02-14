@@ -73,7 +73,7 @@ export default {
           filterOptions: {
             enabled: true,
             placeholder: ' ',
-            filterDropdownItems: ['ADMIN', 'MINER', 'EVALUATOR', 'VENDOR', 'SUPERINTENDENT'],
+            filterDropdownItems: ['ADMIN', 'MINER', 'EVALUATOR', 'SUPPLIER', 'SUPERINTENDENT'],
           },
         },
         {
