@@ -90,11 +90,10 @@
 </template>
 
 <script>
-/* eslint-disable */
 import gql from 'graphql-tag';
 
 export default {
-  apollo:{
+  apollo: {
     reportFinances: {
       query: gql` query reportFinances($username: String!){
         reportFinances(where: {user: {username: {equals: $username}}, approved:{not:false} }){
@@ -172,9 +171,11 @@ export default {
             detail
           }
         }
-      }`,   
-      variables: {
-        username: this.username,
+      }`,
+      variables() {
+        return {
+          username: this.$cookies.get('apollo'),
+        };
       },
     },
     reportGoods: {
@@ -202,21 +203,17 @@ export default {
           }
         }
       }`,
-      variables: {
-        username: this.username,
+      variables() {
+        return {
+          username: this.$cookies.get('apollo'),
+        };
       },
     },
-  },  
+  },
   name: 'rekap',
   data() {
     return {
-      username:this.$cookies.get('ares'),
       procurement: [
-        {
-          label: 'Kategori',
-          field: 'category',
-          tdClass: 'text-center font-weight-bold',
-        },
         {
           label: 'Jenis Barang',
           field: 'detail',
@@ -468,7 +465,7 @@ export default {
       }
       return `${x.tkdn}% ${y}`;
     },
-  }
+  },
 };
 </script>
 

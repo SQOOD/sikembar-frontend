@@ -26,7 +26,7 @@
                     ) Setujui Laporan
                   button.btn.btn-sm.btn-danger.ml-3(
                     type='button'
-                    @click='reject'
+                    @click='showComment()'
                     ) Tolak Laporan
             template(v-slot:process='{ timeObj, state }')
               .card
@@ -40,19 +40,96 @@
                     ) Lanjutkan
                   button.btn.btn-sm.btn-danger.ml-3(
                     type='button'
-                    @click='reject'
+                    @click='showComment()'
                     ) Tolak Laporan
             template(v-slot:finish)
               .card.text-white.bg-success
                 .card-body
                   | Laporan telah disetujui.
+    .card.mb-2(v-if='commentShow')
+      .card-body
+        label.col-form-label-sm.font-weight-bold(for='comment') Alasan Penolakan
+        textarea#akunPengguna.form-control.form-control-sm(
+          aria-describedby='comment' placeholder='Masukan komentar yang ingin diberikan'
+          v-model.trim.lazy="$v.comment.$model"
+          :class="{ 'is-invalid': $v.comment.$error }" )
+        p.error(v-if="!$v.comment.minLength")
+          | Minimum {{$v.comment.$params.minLength.min}} karakter.
+        button.btn.btn-sm.btn-danger.ml-auto.mt-2(
+                    type='button'
+                    @click='reject'
+                    :disabled="reportStatus === 'Laporan Ditolak'"
+                    ) {{ reportStatus }}
     h2 Belanja Barang
-    vue-good-table(:columns='procurement' :rows='reportGood.procurement').mb-3
+    vue-tabs
+      v-tab(title='A')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "A")').mb-3
+      v-tab(title='B')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "B")').mb-3
+      v-tab(title='C')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "C")').mb-3
+      v-tab(title='D')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "D")').mb-3
+      v-tab(title='E')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "E")').mb-3
+      v-tab(title='F')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "F")').mb-3
+      v-tab(title='G')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "G")').mb-3
+      v-tab(title='H')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "H")').mb-3
+      v-tab(title='I')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "I")').mb-3
+      v-tab(title='J')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "J")').mb-3
+      v-tab(title='K')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "K")').mb-3
+      v-tab(title='L')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "L")').mb-3
+      v-tab(title='M')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "M")').mb-3
+      v-tab(title='N')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "N")').mb-3
+      v-tab(title='O')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "O")').mb-3
+      v-tab(title='P')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "P")').mb-3
+      v-tab(title='Q')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "Q")').mb-3
+      v-tab(title='R')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "R")').mb-3
+      v-tab(title='S')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "S")').mb-3
+      v-tab(title='T')
+        vue-good-table(:columns='procurement'
+        :rows='reportGood.procurement.filter(x => x.category === "T")').mb-3
   span(v-else) Loading ...
 </template>
 
 <script>
 import gql from 'graphql-tag';
+import commaNumber from 'comma-number';
+import { required, minLength } from 'vuelidate/lib/validators';
+
 
 export default {
   apollo: {
@@ -62,6 +139,7 @@ export default {
           id
           year
           createdAt
+          rate
           report_type
           procurement{
             category
@@ -83,14 +161,19 @@ export default {
       }`,
     },
   },
+  validations: {
+    comment: {
+      required,
+      minLength: minLength(10),
+    },
+  },
   data() {
     return {
+      comment: '',
+      commentShow: false,
+      reportStatus: 'Kirim Penolakan',
+      rate: 'USD',
       procurement: [
-        {
-          label: 'Kategori',
-          field: 'category',
-          tdClass: 'text-center font-weight-bold',
-        },
         {
           label: 'Jenis Barang',
           field: 'detail',
@@ -106,11 +189,19 @@ export default {
           label: 'Harga Satuan',
           field: 'unit_price',
           tdClass: 'text-center font-weight-bold',
+          formatFn: this.formatFn,
         },
         {
           label: 'Kuantitas',
           field: 'volume_value',
           tdClass: 'text-center font-weight-bold',
+          formatFn: this.formatFn,
+        },
+        {
+          label: 'Total Harga',
+          field: this.TotalHarga,
+          tdClass: 'text-center font-weight-bold',
+          formatFn: this.formatFn,
         },
         {
           label: 'Tipe Pengadaan',
@@ -132,6 +223,12 @@ export default {
     });
   },
   methods: {
+    showComment() {
+      this.commentShow = !this.commentShow;
+    },
+    formatFn(x) {
+      return `${this.rate} ${commaNumber(x, '.', ',')}`;
+    },
     assumptionQuantity(x) {
       return `${x.volume_value} ${x.volume_unit}`;
     },
@@ -149,6 +246,9 @@ export default {
         return `${x.district_of_origin} <span class='badge badge-info'>Nasional</span>`;
       }
       return `${x.current_district} <span class='badge badge-success'>Lokal</span>`;
+    },
+    TotalHarga(x) {
+      return x.unit_price * x.volume_value;
     },
     TKDN(x) {
       let y = '';
@@ -182,16 +282,31 @@ export default {
     },
     reject() {
       this.$refs.vac.stopCountdown();
-
+      this.reportStatus = 'Laporan Ditolak';
       this.$apollo.mutate({
-        mutation: gql`mutation updateOneReportGood($id: ID!){
-          deleteOneReportFinance(where:{id: $id}),
+        mutation: gql`mutation updateOneReportGood($id: String!, $comment: String){
+          updateOneReportGood(where:{id: $id}, data:{flag_for_deletion: true, comment: $comment}){
+            flag_for_deletion
+          },
         }`,
         variables: {
           id: this.$route.params.reportID,
+          comment: this.comment,
         },
       });
-      this.$router.push({ name: 'admin-profile' });
+      setTimeout(
+        () => { this.$router.push({ name: 'admin-profile' }); }, 3000,
+      );
+
+      // this.$apollo.mutate({
+      //   mutation: gql`mutation updateOneReportGood($id: ID!){
+      //     deleteOneReportFinance(where:{id: $id}),
+      //   }`,
+      //   variables: {
+      //     id: this.$route.params.reportID,
+      //   },
+      // });
+      // this.$router.push({ name: 'admin-profile' });
     },
   },
 };
@@ -234,5 +349,12 @@ export default {
 
   /deep/ .vgt-table td svg{
     margin-right: 0.3rem;
+  }
+
+  .error{
+    color:#dc3545;
+    font-size:0.7rem;
+    line-height:1.1;
+    margin-top:0.3rem;
   }
 </style>

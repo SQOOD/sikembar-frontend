@@ -27,11 +27,6 @@
             )
             font-awesome-icon.mr-2(:icon='["fas", "file-alt"]')
             | Hapus
-          button.btn.btn-sm.btn-info.mr-2(
-            @click='editUser(props.row.id)'
-            )
-            font-awesome-icon.mr-2(:icon='["fas", "file-alt"]')
-            | Ubah
 </template>
 
 <script>

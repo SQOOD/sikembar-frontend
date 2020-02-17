@@ -24,7 +24,7 @@
                   ) Setujui Laporan
                 button.btn.btn-sm.btn-danger.ml-3(
                   type='button'
-                  @click='reject'
+                  @click='showComment'
                   ) Tolak Laporan
           template(v-slot:process='{ timeObj, state }')
             .card
@@ -38,12 +38,26 @@
                   ) Lanjutkan
                 button.btn.btn-sm.btn-danger.ml-3(
                   type='button'
-                  @click='reject'
+                  @click='showComment'
                   ) Tolak Laporan
           template(v-slot:finish)
             .card.text-white.bg-success
               .card-body
                 | Laporan telah disetujui.
+    .card.mb-2(v-if='commentShow')
+      .card-body
+        label.col-form-label-sm.font-weight-bold(for='comment') Alasan Penolakan
+        textarea#akunPengguna.form-control.form-control-sm(
+          aria-describedby='comment' placeholder='Masukan komentar yang ingin diberikan'
+          v-model.trim.lazy="$v.comment.$model"
+          :class="{ 'is-invalid': $v.comment.$error }" )
+        p.error(v-if="!$v.comment.minLength")
+          | Minimum {{$v.comment.$params.minLength.min}} karakter.
+        button.btn.btn-sm.btn-danger.ml-auto.mt-2(
+                    type='button'
+                    @click='reject'
+                    :disabled="reportStatus === 'Laporan Ditolak'"
+                    ) {{ reportStatus }}
     vue-tabs
       v-tab(title='Asumsi Keuangan')
         h3 [ BBM Sebesar {{ reportFinance.fuel[0].price }} {{ reportFinance.fuel[0].currency }}]
@@ -75,6 +89,8 @@
 
 <script>
 import gql from 'graphql-tag';
+import commaNumber from 'comma-number';
+import { required, minLength } from 'vuelidate/lib/validators';
 
 export default {
   apollo: {
@@ -157,8 +173,17 @@ export default {
       }`,
     },
   },
+  validations: {
+    comment: {
+      required,
+      minLength: minLength(10),
+    },
+  },
   data() {
     return {
+      comment: '',
+      reportStatus: 'Kirim Penolakan',
+      commentShow: false,
       assumption: [
         {
           label: 'Uraian',
@@ -343,11 +368,14 @@ export default {
     });
   },
   methods: {
+    showComment() {
+      this.commentShow = !this.commentShow;
+    },
     assumptionQuantity(x) {
       return `${x.volume_value} ${x.volume_unit}`;
     },
     assumptionValue(x) {
-      return `${x.price} ${x.currency}`;
+      return `${commaNumber(x.price, '.', ',')} ${x.currency}`;
     },
     assumptionCutOff(x) {
       let y = '';
@@ -359,7 +387,7 @@ export default {
       return `${x.cut_off} ${y}`;
     },
     balanceValue(x) {
-      return `${x.value}`;
+      return `${commaNumber(x.value, '.', ',')}`;
     },
     submitApproval() {
       this.$refs.vac.startCountdown();
@@ -384,16 +412,31 @@ export default {
     },
     reject() {
       this.$refs.vac.stopCountdown();
-
+      this.reportStatus = 'Laporan Ditolak';
       this.$apollo.mutate({
-        mutation: gql`mutation updateOneReportFinance($id: ID!){
-          deleteOneReportFinance(where:{id: $id}),
+        mutation: gql`mutation updateOneReportFinance($id: String!, $comment: String){
+          updateOneReportGood(where:{id: $id}, data:{flag_for_deletion: true, comment: $comment}){
+            flag_for_deletion
+          },
         }`,
         variables: {
           id: this.$route.params.reportID,
+          comment: this.comment,
         },
       });
-      this.$router.push({ name: 'admin-profile' });
+      setTimeout(
+        () => { this.$router.push({ name: 'admin-profile' }); }, 3000,
+      );
+
+      // this.$apollo.mutate({
+      //   mutation: gql`mutation updateOneReportFinance($id: ID!){
+      //     deleteOneReportFinance(where:{id: $id}),
+      //   }`,
+      //   variables: {
+      //     id: this.$route.params.reportID,
+      //   },
+      // });
+      // this.$router.push({ name: 'admin-profile' });
     },
   },
 };

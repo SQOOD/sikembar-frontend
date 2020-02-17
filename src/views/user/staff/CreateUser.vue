@@ -75,7 +75,7 @@
                 input#npwp.form-control.form-control-sm(type='text'
                   aria-describedby='npwp' v-model='npwp' placeholder='NPWP')
                 label.col-form-label-sm.font-weight-bold(for='alamat') Alamat Perusahaan
-                textarea#alamat.form-control.form-control-sm(type='text'
+                textarea#alamat.form-control.form-control-sm(
                   aria-describedby='address' v-model='address' placeholder='Alamat Perusahaan')
             vue-recaptcha(
               ref='recaptcha'

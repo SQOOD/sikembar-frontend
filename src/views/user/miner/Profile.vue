@@ -26,6 +26,14 @@
           Berkas Formulir SIKEMBAR dihalaman ini<br/><small>atau klik disini untuk mencari \
           berkas dalam komputer anda.</small>`)
         .filewrapper.py-2.px-3.mx-3(v-if='fileStatus' :class='fileStatusClass') {{ fileStatus }}
+        section(v-if='reportFinances')
+          h4.font-weight-bold.text-center Daftar Laporan Keuangan
+          vue-good-table(:columns='columns' :rows='reportFinances').mb-3
+        span( v-else ) Loading ...
+        section(v-if='reportGoods')
+          h4.font-weight-bold.text-center Daftar Laporan Belanja Barang
+          vue-good-table(:columns='columns' :rows='reportGoods').mb-3
+        span( v-else ) Loading ...
 </template>
 
 <script>
@@ -43,7 +51,6 @@ import template from '@/lib/json-map/ReportFinance';
 import template3 from '@/lib/json-map/ReportGood';
 
 import ProfileDetail from '@/components/widgets/profile/Detail.vue';
-import Charts from '@/components/charts/RandomCharts.vue';
 import ExcelAlert from '@/components/alerts/ExcelFile.vue';
 
 import 'filepond/dist/filepond.min.css';
@@ -59,6 +66,27 @@ export default {
       user: '',
       fileStatus: '',
       fileStatusClass: '',
+      columns: [
+        {
+          label: 'ID Laporan',
+          field: 'id',
+          tdClass: 'text-center font-weight-bold',
+        },
+        {
+          label: 'Waktu Unggah',
+          field: 'createdAt',
+          type: 'date',
+          dateInputFormat: 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'',
+          dateOutputFormat: 'MMM-dd-yyyy HH:mm',
+          tdClass: 'text-center font-weight-bold',
+        },
+        {
+          label: 'Status',
+          field: this.reportStatus,
+          html: true,
+          width: '50px',
+        },
+      ],
     };
   },
   apollo: {
@@ -83,10 +111,49 @@ export default {
         };
       },
     },
+    reportFinances: {
+      query: gql`query reportFinances($username: String!){
+        reportFinances(where:{user: {username: {equals: $username}}}, first: 5){
+          id
+          user{
+            company_name
+            company_type
+          }
+          createdAt
+          approved
+          flag_for_deletion
+          comment
+        }
+      }`,
+      variables() {
+        return {
+          username: this.$cookies.get('apollo'),
+        };
+      },
+    },
+    reportGoods: {
+      query: gql`query reportGoods($username: String!){
+        reportGoods(where:{user: {username: {equals: $username}}}, first: 5){
+          id
+          user{
+            company_name
+            company_type
+          }
+          createdAt
+          approved
+          flag_for_deletion
+          comment
+        }
+      }`,
+      variables() {
+        return {
+          username: this.$cookies.get('apollo'),
+        };
+      },
+    },
   },
   components: {
     ProfileDetail,
-    Charts,
     ExcelAlert,
     FilePond: vueFilePond(
       FilePondPluginValidateSize,
@@ -202,6 +269,18 @@ export default {
             });
           });
       }
+    },
+    reportStatus(x) {
+      let y = '';
+      if (x.approved && !x.flag_for_deletion) {
+        y = '<span class="badge badge-success">Diterima</span>';
+      } else if (!x.approved && x.flag_for_deletion) {
+        y = `<span class="badge badge-danger">Ditolak</span><span>${x.comment}</span>`;
+      } else {
+        y = '<span class="badge badge-secondary">Dalam Proses</span>';
+      }
+
+      return y;
     },
   },
 };
